@@ -1,8 +1,6 @@
 import React from "react"
-import { cleanUrl } from "~/libs/clean-url"
 import {
   geWebSearchFollowUpPrompt,
-  getOllamaURL,
   systemPromptForNonRagOption
 } from "~/services/ollama"
 import { type ChatHistory } from "~/store/option"
@@ -34,11 +32,10 @@ export const useMessageOption = () => {
     controller: abortController,
     setController: setAbortController
   } = useDialoq()
+
   const {
     history,
-    // messages,
     setHistory,
-    // setMessages,
     setStreaming,
     streaming,
     setIsFirstMessage,
@@ -104,6 +101,8 @@ export const useMessageOption = () => {
       provider: modelInfo.model_provider.key as any
     })
     let newMessage: Message[] = []
+    let generateMessageId = generateID()
+
     if (!isRegenerate) {
       newMessage = [
         ...messages,
@@ -118,7 +117,8 @@ export const useMessageOption = () => {
           isBot: true,
           name: selectedModel,
           message: "▋",
-          sources: []
+          sources: [],
+          id: generateMessageId
         }
       ]
     } else {
@@ -128,12 +128,14 @@ export const useMessageOption = () => {
           isBot: true,
           name: selectedModel,
           message: "▋",
-          sources: []
+          sources: [],
+          id: generateMessageId
         }
       ]
     }
     setMessages(newMessage)
-    const appendingIndex = newMessage.length - 1
+    let fullText = ""
+    let contentToSave = ""
 
     try {
       setIsSearchingInternet(true)
@@ -198,26 +200,37 @@ export const useMessageOption = () => {
       )
       let count = 0
       for await (const chunk of chunks) {
+        contentToSave += chunk.content
+        fullText += chunk.content
         if (count === 0) {
           setIsProcessing(true)
-          newMessage[appendingIndex].message = chunk.content + "▋"
-          setMessages(newMessage)
-        } else {
-          newMessage[appendingIndex].message =
-            newMessage[appendingIndex].message.slice(0, -1) +
-            chunk.content +
-            "▋"
-          setMessages(newMessage)
         }
-
+        setMessages((prev) => {
+          return prev.map((message) => {
+            if (message.id === generateMessageId) {
+              return {
+                ...message,
+                message: fullText
+              }
+            }
+            return message
+          })
+        })
         count++
       }
-
-      newMessage[appendingIndex].message = newMessage[
-        appendingIndex
-      ].message.slice(0, -1)
-
-      newMessage[appendingIndex].sources = source
+      // update the message with the full text
+      setMessages((prev) => {
+        return prev.map((message) => {
+          if (message.id === generateMessageId) {
+            return {
+              ...message,
+              message: fullText,
+              sources: source
+            }
+          }
+          return message
+        })
+      })
 
       if (!isRegenerate) {
         setHistory([
@@ -229,7 +242,7 @@ export const useMessageOption = () => {
           },
           {
             role: "assistant",
-            content: newMessage[appendingIndex].message
+            content: fullText
           }
         ])
       } else {
@@ -237,7 +250,7 @@ export const useMessageOption = () => {
           ...history,
           {
             role: "assistant",
-            content: newMessage[appendingIndex].message
+            content: fullText
           }
         ])
       }
@@ -250,7 +263,7 @@ export const useMessageOption = () => {
           historyId,
           selectedModel!,
           "assistant",
-          newMessage[appendingIndex].message,
+          fullText,
           [],
           source
         )
@@ -263,7 +276,7 @@ export const useMessageOption = () => {
           newHistoryId.id,
           selectedModel!,
           "assistant",
-          newMessage[appendingIndex].message,
+          fullText,
           [],
           source
         )
@@ -273,60 +286,28 @@ export const useMessageOption = () => {
       setIsProcessing(false)
       setStreaming(false)
     } catch (e) {
-      //@ts-ignore
-      if (e?.name === "AbortError") {
-        newMessage[appendingIndex].message = newMessage[
-          appendingIndex
-        ].message.slice(0, -1)
+      const errorSave = await saveMessageOnError({
+        e,
+        botMessage: fullText,
+        history,
+        historyId,
+        image,
+        selectedModel,
+        setHistory,
+        setHistoryId,
+        userMessage: message,
+        isRegenerating: isRegenerate
+      })
 
-        setHistory([
-          ...history,
-          {
-            role: "user",
-            content: message,
-            image
-          },
-          {
-            role: "assistant",
-            content: newMessage[appendingIndex].message
-          }
-        ])
-
-        if (historyId) {
-          await saveMessage(historyId, selectedModel!, "user", message, [image])
-          await saveMessage(
-            historyId,
-            selectedModel!,
-            "assistant",
-            newMessage[appendingIndex].message,
-            []
-          )
-        } else {
-          const newHistoryId = await saveHistory(message)
-          await saveMessage(newHistoryId.id, selectedModel!, "user", message, [
-            image
-          ])
-          await saveMessage(
-            newHistoryId.id,
-            selectedModel!,
-            "assistant",
-            newMessage[appendingIndex].message,
-            []
-          )
-          setHistoryId(newHistoryId.id)
-        }
-      } else {
-        //@ts-ignore
+      if (!errorSave) {
         notification.error({
           message: t("error"),
           description: e?.message || t("somethingWentWrong")
         })
       }
-
       setIsProcessing(false)
       setStreaming(false)
     } finally {
-      setIsSearchingInternet(false)
       setAbortController(null)
     }
   }
@@ -551,7 +532,6 @@ export const useMessageOption = () => {
       signal = controller.signal
     }
 
-    console.log("signal", signal)
     if (webSearch) {
       await searchChatMode(
         message,
@@ -601,7 +581,6 @@ export const useMessageOption = () => {
   }
 
   const stopStreamingRequest = () => {
-    console.log("stopStreamingRequest", abortController)
     if (abortController) {
       abortController.abort()
       setAbortController(null)
@@ -636,20 +615,22 @@ export const useMessageOption = () => {
       }
 
       const currentHumanMessage = newMessages[index]
-      newMessages[index].message = message
-      newHistory[index].content = message
+
       const previousMessages = newMessages.slice(0, index + 1)
       setMessages(previousMessages)
-      const previousHistory = newHistory.slice(0, index + 1)
+      // previous history
+      const previousHistory = newHistory.slice(0, index)
       setHistory(previousHistory)
       await updateMessageByIndex(historyId, index, message)
       await deleteChatForEdit(historyId, index)
+      const abortController = new AbortController()
       await onSubmit({
         message: message,
         image: currentHumanMessage.images[0] || "",
         isRegenerate: true,
         messages: previousMessages,
-        memory: previousHistory
+        memory: previousHistory,
+        controller: abortController
       })
     } else {
       newMessages[index].message = message
