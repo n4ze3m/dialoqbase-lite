@@ -11,8 +11,6 @@ import {
   deleteChatForEdit,
   getPromptById,
   removeMessageUsingHistoryId,
-  saveHistory,
-  saveMessage,
   updateMessageByIndex
 } from "@/db"
 import { useNavigate } from "react-router-dom"
@@ -23,7 +21,7 @@ import { useTranslation } from "react-i18next"
 import { generateID, getModelInfo } from "@/db/util"
 import { dialoqChatModel } from "@/libs/model"
 import { useDialoq } from "@/context"
-import { saveMessageOnError } from "./chat-helper"
+import { saveMessageOnError, saveMessageOnSuccess } from "./chat-helper"
 
 export const useMessageOption = () => {
   const {
@@ -232,56 +230,29 @@ export const useMessageOption = () => {
         })
       })
 
-      if (!isRegenerate) {
-        setHistory([
-          ...history,
-          {
-            role: "user",
-            content: message,
-            image
-          },
-          {
-            role: "assistant",
-            content: fullText
-          }
-        ])
-      } else {
-        setHistory([
-          ...history,
-          {
-            role: "assistant",
-            content: fullText
-          }
-        ])
-      }
-
-      if (historyId) {
-        if (!isRegenerate) {
-          await saveMessage(historyId, selectedModel!, "user", message, [image])
-        }
-        await saveMessage(
-          historyId,
-          selectedModel!,
-          "assistant",
-          fullText,
-          [],
-          source
-        )
-      } else {
-        const newHistoryId = await saveHistory(message)
-        await saveMessage(newHistoryId.id, selectedModel!, "user", message, [
+      setHistory([
+        ...history,
+        {
+          role: "user",
+          content: message,
           image
-        ])
-        await saveMessage(
-          newHistoryId.id,
-          selectedModel!,
-          "assistant",
-          fullText,
-          [],
-          source
-        )
-        setHistoryId(newHistoryId.id)
-      }
+        },
+        {
+          role: "assistant",
+          content: fullText
+        }
+      ])
+
+      await saveMessageOnSuccess({
+        historyId,
+        setHistoryId,
+        isRegenerate,
+        selectedModel,
+        message,
+        image,
+        fullText,
+        source
+      })
 
       setIsProcessing(false)
       setStreaming(false)
@@ -457,25 +428,16 @@ export const useMessageOption = () => {
         }
       ])
 
-      if (historyId) {
-        if (!isRegenerate) {
-          await saveMessage(historyId, selectedModel, "user", message, [image])
-        }
-        await saveMessage(historyId, selectedModel, "assistant", fullText, [])
-      } else {
-        const newHistoryId = await saveHistory(message)
-        await saveMessage(newHistoryId.id, selectedModel, "user", message, [
-          image
-        ])
-        await saveMessage(
-          newHistoryId.id,
-          selectedModel,
-          "assistant",
-          fullText,
-          []
-        )
-        setHistoryId(newHistoryId.id)
-      }
+      await saveMessageOnSuccess({
+        historyId,
+        setHistoryId,
+        isRegenerate,
+        selectedModel,
+        message,
+        image,
+        fullText,
+        source: []
+      })
 
       setIsProcessing(false)
       setStreaming(false)

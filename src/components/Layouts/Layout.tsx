@@ -76,7 +76,8 @@ export default function OptionLayout({
                 <div>
                   <NavLink
                     to="/"
-                    className="text-gray-500 items-center dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    className="text-gray-500 items-center dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    >
                     <ChevronLeft className="w-6 h-6" />
                   </NavLink>
                 </div>
@@ -91,7 +92,7 @@ export default function OptionLayout({
               <div>
                 <button
                   onClick={clearChat}
-                  className="inline-flex items-center rounded-lg border  dark:border-gray-700 bg-transparent px-3 py-3 text-sm font-medium leading-4 text-gray-800  dark:text-white disabled:opacity-50 ">
+                  className="inline-flex items-center rounded-lg border  dark:border-gray-700 bg-transparent px-3 py-3 text-sm font-medium leading-4 text-gray-800  dark:text-white disabled:opacity-50 ease-in-out transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white">
                   <SquarePen className="h-4 w-4 mr-3" />
                   {t("newChat")}
                 </button>
