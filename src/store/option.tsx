@@ -1,0 +1,98 @@
+import { Message } from "@/types/message"
+import { create } from "zustand"
+type ReactStyleStateSetter<T> = T | ((prev: T) => T)
+
+const isArray = (value: any): value is any[] => {
+  return Array.isArray(value)
+}
+
+
+
+export type ChatHistory = {
+  role: "user" | "assistant" | "system"
+  content: string
+  image?: string
+}[]
+
+type State = {
+  messages: Message[]
+  // setMessages: (messages: Message[]) => void
+  setMessages: (messages: ReactStyleStateSetter<Message[]>) => void
+  history: ChatHistory
+  setHistory: (history: ChatHistory) => void
+  streaming: boolean
+  setStreaming: (streaming: boolean) => void
+  isFirstMessage: boolean
+  setIsFirstMessage: (isFirstMessage: boolean) => void
+  historyId: string | null
+  setHistoryId: (history_id: string | null) => void
+  isLoading: boolean
+  setIsLoading: (isLoading: boolean) => void
+  isProcessing: boolean
+  setIsProcessing: (isProcessing: boolean) => void
+  selectedModel: string | null
+  setSelectedModel: (selectedModel: string) => void
+  chatMode: "normal" | "rag"
+  setChatMode: (chatMode: "normal" | "rag") => void
+  isEmbedding: boolean
+  setIsEmbedding: (isEmbedding: boolean) => void
+  speechToTextLanguage: string
+  setSpeechToTextLanguage: (language: string) => void
+  webSearch: boolean
+  setWebSearch: (webSearch: boolean) => void
+  isSearchingInternet: boolean
+  setIsSearchingInternet: (isSearchingInternet: boolean) => void
+
+  selectedSystemPrompt: string | null
+  setSelectedSystemPrompt: (selectedSystemPrompt: string) => void
+
+  selectedQuickPrompt: string | null
+  setSelectedQuickPrompt: (selectedQuickPrompt: string) => void
+}
+
+export const useStoreMessageOption = create<State>((set) => ({
+  messages: [],
+  setMessages: (newArrOrSetterFn) => {
+    set(({ messages }) => {
+      if (isArray(newArrOrSetterFn)) {
+        const newArr = newArrOrSetterFn
+        console.log("newArr", newArr)
+        return { messages: newArr }
+      }
+      const setterFn = newArrOrSetterFn
+      return {
+        messages: setterFn(messages)
+      }
+    })
+  },
+  history: [],
+  setHistory: (history) => set({ history }),
+  streaming: false,
+  setStreaming: (streaming) => set({ streaming }),
+  isFirstMessage: true,
+  setIsFirstMessage: (isFirstMessage) => set({ isFirstMessage }),
+  historyId: null,
+  setHistoryId: (historyId) => set({ historyId }),
+  isLoading: false,
+  setIsLoading: (isLoading) => set({ isLoading }),
+  isProcessing: false,
+  setIsProcessing: (isProcessing) => set({ isProcessing }),
+  speechToTextLanguage: "en-US",
+  setSpeechToTextLanguage: (language) =>
+    set({ speechToTextLanguage: language }),
+  selectedModel: null,
+  setSelectedModel: (selectedModel) => set({ selectedModel }),
+  chatMode: "normal",
+  setChatMode: (chatMode) => set({ chatMode }),
+  isEmbedding: false,
+  setIsEmbedding: (isEmbedding) => set({ isEmbedding }),
+  webSearch: false,
+  setWebSearch: (webSearch) => set({ webSearch }),
+  isSearchingInternet: false,
+  setIsSearchingInternet: (isSearchingInternet) => set({ isSearchingInternet }),
+  selectedSystemPrompt: null,
+  setSelectedSystemPrompt: (selectedSystemPrompt) =>
+    set({ selectedSystemPrompt }),
+  selectedQuickPrompt: null,
+  setSelectedQuickPrompt: (selectedQuickPrompt) => set({ selectedQuickPrompt })
+}))

@@ -1,0 +1,11 @@
+{
+    "extName": {
+        "message": "Dialoqlite - A SidePanel & Web UI for AI Models"
+    },
+    "extDescription": {
+        "message": "Easily interact with AI models in a SidePanel or Web UI. No coding required."
+    },
+    "openSidePanelToChat": {
+        "message": "Open SidePanel to Chat"
+    }
+}
