@@ -115,8 +115,7 @@ export const PlaygroundMessage = (props: Props) => {
                 {props.isBot && (
                   <>
                     {!props.hideCopy && (
-                      <Tooltip title={t("copyToClipboard")}
-                      >
+                      <Tooltip title={t("copyToClipboard")}>
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(props.message)
@@ -137,8 +136,7 @@ export const PlaygroundMessage = (props: Props) => {
 
                     {!props.hideEditAndRegenerate &&
                       props.currentMessageIndex === props.totalMessages - 1 && (
-                        <Tooltip title={t("regenerate")}
-                        >
+                        <Tooltip title={t("regenerate")}>
                           <button
                             onClick={props.onRengerate}
                             className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
@@ -149,8 +147,7 @@ export const PlaygroundMessage = (props: Props) => {
                   </>
                 )}
                 {!props.hideEditAndRegenerate && (
-                  <Tooltip title={t("edit")}
-                  >
+                  <Tooltip title={t("edit")}>
                     <button
                       onClick={() => setEditMode(true)}
                       className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">

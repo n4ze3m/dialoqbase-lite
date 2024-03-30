@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-
 import { useLocation, NavLink } from "react-router-dom"
 import { Sidebar } from "../Option/Sidebar"
 import { Drawer, Select, Tooltip } from "antd"
@@ -152,13 +151,13 @@ export default function OptionLayout({
                     label: (
                       <span
                         key={prompt.title}
-                        className="flex flex-row justify-between items-center">
-                        {prompt.title}
+                        className="flex flex-row gap-3 items-center">
                         {prompt.is_system ? (
                           <ComputerIcon className="w-4 h-4" />
                         ) : (
                           <ZapIcon className="w-4 h-4" />
                         )}
+                        {prompt.title}
                       </span>
                     ),
                     value: prompt.id
