@@ -5,6 +5,7 @@ import { OpenAiMonoIcon } from "../Icons/OpenAIMono"
 import { AnthropicMonoIcon } from "../Icons/AnthropicMono"
 import { FireworksMonoIcon } from "../Icons/FireworksMono"
 import { GeminiMonoIcon } from "../Icons/Gemini copy"
+import { GroqMonoIcon } from "../Icons/GroqMono"
 
 export const ProviderIcons = ({
   provider,
@@ -30,7 +31,10 @@ export const ProviderIcons = ({
       return <OpenRouterIcon className="w-5 h-5" />
 
     case "google":
-        return <GeminiMonoIcon className="w-5 h-5" />
+      return <GeminiMonoIcon className="w-5 h-5" />
+
+    case "groq":
+      return <GroqMonoIcon className="w-5 h-5" />
 
     default:
       return <BrainIcon className="w-5 h-5" />
