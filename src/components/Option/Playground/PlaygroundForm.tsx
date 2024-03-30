@@ -132,7 +132,7 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
         if (value.message.trim().length === 0) {
           return
         }
-        if (!selectedModel || selectedModel.length === 0) {
+        if (!selectedModel || selectedModel?.model_id?.length === 0) {
           form.setFieldError("message", t("formError.noModel"))
           return
         }
@@ -153,7 +153,7 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
     }
   }
   return (
-    <div className="px-3 pt-3 md:px-6 md:pt-6 md:bg-white dark:bg-[#262626] border rounded-t-xl  dark:border-gray-600">
+    <div className="px-3 pt-3 md:px-6 md:pt-6 bg-gray-50 dark:bg-[#262626] border rounded-t-xl  dark:border-gray-600">
       <div
         className={`h-full rounded-md shadow relative ${
           form.values.image.length === 0 ? "hidden" : "block"
@@ -176,10 +176,10 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
         </div>
       </div>
       <div>
-        <div className="flex">
+        <div className="flex bg-white">
           <form
             onSubmit={form.onSubmit(async (value) => {
-              if (!selectedModel || selectedModel.length === 0) {
+              if (!selectedModel || selectedModel?.model_id?.length === 0) {
                 form.setFieldError("message", t("formError.noModel"))
                 return
               }
@@ -207,6 +207,7 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
               accept="image/*"
               multiple={false}
               onChange={onInputChange}
+              disabled={!selectedModel?.vision}
             />
             <div className="w-full border-x border-t flex flex-col dark:border-gray-600 rounded-t-xl p-2">
               <textarea
@@ -276,15 +277,16 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
                   <Tooltip title={t("tooltip.uploadImage")}>
                     <button
                       type="button"
+                      disabled={!selectedModel?.vision}
                       onClick={() => {
                         inputRef.current?.click()
                       }}
                       className={`flex items-center justify-center dark:text-gray-300 ${
                         chatMode === "rag" ? "hidden" : "block"
-                      }`}>
+                      } disabled:opacity-50`}>
                       <ImageIcon className="h-5 w-5" />
                     </button>
-                  </Tooltip> 
+                  </Tooltip>
                   {!isSending ? (
                     <Dropdown.Button
                       htmlType="submit"

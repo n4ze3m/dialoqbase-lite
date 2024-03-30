@@ -70,7 +70,7 @@ export default function OptionLayout({
     <div>
       <div>
         <div className="flex flex-col">
-          <div className="sticky top-0 z-[999] flex h-16 p-3  bg-white border-b  dark:bg-[#171717] dark:border-gray-600">
+          <div className="sticky top-0 z-[999] flex h-16 p-3  bg-gray-50 border-b  dark:bg-[#171717] dark:border-gray-600">
             <div className="flex gap-2 items-center">
               {pathname !== "/" && (
                 <div>
@@ -91,7 +91,7 @@ export default function OptionLayout({
               <div>
                 <button
                   onClick={clearChat}
-                  className="inline-flex items-center rounded-lg border  dark:border-gray-700 bg-transparent px-3 py-3 text-sm font-medium leading-4 text-gray-800  dark:text-white disabled:opacity-50 ease-in-out transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white">
+                  className="inline-flex bg-white items-center rounded-lg border  dark:border-gray-700 bg-transparent px-3 py-3 text-sm font-medium leading-4 text-gray-800  dark:text-white disabled:opacity-50 ease-in-out transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white">
                   <SquarePen className="h-4 w-4 mr-3" />
                   {t("newChat")}
                 </button>
@@ -101,8 +101,11 @@ export default function OptionLayout({
               </span>
               <div>
                 <Select
-                  value={selectedModel}
-                  onChange={setSelectedModel}
+                  value={selectedModel?.model_id}
+                  onChange={(e) => {
+                    const model = models?.find((model) => model.model_id === e)
+                    setSelectedModel(model!)
+                  }}
                   size="large"
                   loading={isModelsLoading || isModelsFetching}
                   filterOption={(input, option) =>

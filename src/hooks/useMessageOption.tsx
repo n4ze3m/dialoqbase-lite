@@ -87,7 +87,7 @@ export const useMessageOption = () => {
       image = `data:image/jpeg;base64,${image.split(",")[1]}`
     }
 
-    const modelInfo = await getModelInfo(selectedModel)
+    const modelInfo = await getModelInfo(selectedModel.model_id)
 
     const chatModel = await dialoqChatModel({
       config: {
@@ -95,7 +95,7 @@ export const useMessageOption = () => {
         baseUrl: modelInfo.model_provider.baseUrl,
         headers: modelInfo.model_provider.headers
       },
-      modelName: selectedModel,
+      modelName: selectedModel.model_id,
       provider: modelInfo.model_provider.key as any
     })
     let newMessage: Message[] = []
@@ -113,7 +113,7 @@ export const useMessageOption = () => {
         },
         {
           isBot: true,
-          name: selectedModel,
+          name: selectedModel.name,
           message: "▋",
           sources: [],
           id: generateMessageId
@@ -124,10 +124,12 @@ export const useMessageOption = () => {
         ...messages,
         {
           isBot: true,
-          name: selectedModel,
+          name: selectedModel.name,
           message: "▋",
           sources: [],
-          id: generateMessageId
+          id: generateMessageId,
+          model_id: selectedModel.model_id,
+          model_provider: selectedModel.provider
         }
       ]
     }
@@ -247,11 +249,13 @@ export const useMessageOption = () => {
         historyId,
         setHistoryId,
         isRegenerate,
-        selectedModel,
+        selectedModel: selectedModel.name,
         message,
         image,
         fullText,
-        source
+        source,
+        model_provider: selectedModel.provider,
+        model_id: selectedModel.model_id
       })
 
       setIsProcessing(false)
@@ -263,11 +267,13 @@ export const useMessageOption = () => {
         history,
         historyId,
         image,
-        selectedModel,
+        selectedModel: selectedModel.name,
         setHistory,
         setHistoryId,
         userMessage: message,
-        isRegenerating: isRegenerate
+        isRegenerating: isRegenerate,
+        model_provider: selectedModel.provider,
+        model_id: selectedModel.model_id
       })
 
       if (!errorSave) {
@@ -291,7 +297,7 @@ export const useMessageOption = () => {
     history: ChatHistory,
     signal: AbortSignal
   ) => {
-    const modelInfo = await getModelInfo(selectedModel)
+    const modelInfo = await getModelInfo(selectedModel.model_id)
 
     const chatModel = await dialoqChatModel({
       config: {
@@ -299,7 +305,7 @@ export const useMessageOption = () => {
         baseUrl: modelInfo.model_provider.baseUrl,
         headers: modelInfo.model_provider.headers
       },
-      modelName: selectedModel,
+      modelName: selectedModel.model_id,
       provider: modelInfo.model_provider.key as any
     })
 
@@ -327,10 +333,12 @@ export const useMessageOption = () => {
         },
         {
           isBot: true,
-          name: selectedModel,
+          name: selectedModel.name,
           message: "▋",
           sources: [],
-          id: generateMessageId
+          id: generateMessageId,
+          model_id: selectedModel.model_id,
+          model_provider: selectedModel.provider
         }
       ]
     } else {
@@ -338,10 +346,12 @@ export const useMessageOption = () => {
         ...messages,
         {
           isBot: true,
-          name: selectedModel,
+          name: selectedModel.name,
           message: "▋",
           sources: [],
-          id: generateMessageId
+          id: generateMessageId,
+          model_id: selectedModel.model_id,
+          model_provider: selectedModel.provider
         }
       ]
     }
@@ -453,11 +463,13 @@ export const useMessageOption = () => {
         historyId,
         setHistoryId,
         isRegenerate,
-        selectedModel,
+        selectedModel: selectedModel.name,
         message,
         image,
         fullText,
-        source: []
+        source: [],
+        model_provider: selectedModel.provider,
+        model_id: selectedModel.model_id
       })
 
       setIsProcessing(false)
@@ -469,11 +481,13 @@ export const useMessageOption = () => {
         history,
         historyId,
         image,
-        selectedModel,
+        selectedModel: selectedModel.name,
         setHistory,
         setHistoryId,
         userMessage: message,
-        isRegenerating: isRegenerate
+        isRegenerating: isRegenerate,
+        model_provider: selectedModel.provider,
+        model_id: selectedModel.model_id
       })
 
       if (!errorSave) {
@@ -571,7 +585,7 @@ export const useMessageOption = () => {
   }
 
   const validateBeforeSubmit = () => {
-    if (!selectedModel || selectedModel?.trim()?.length === 0) {
+    if (!selectedModel || selectedModel?.name?.trim()?.length === 0) {
       notification.error({
         message: t("error"),
         description: t("validationSelectModel")

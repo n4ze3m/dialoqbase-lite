@@ -27,6 +27,8 @@ type Message = {
   images?: string[]
   sources?: string[]
   search?: WebSearch
+  model_provider?: string
+  model_id?: string
   createdAt: number
 }
 
@@ -222,7 +224,9 @@ export const saveMessage = async (
   content: string,
   images: string[],
   source?: any[],
-  time?: number
+  time?: number,
+  model_provider?: string,
+  model_id?: string
 ) => {
   const id = generateID()
   let createdAt = Date.now()
@@ -237,7 +241,9 @@ export const saveMessage = async (
     content,
     images,
     createdAt,
-    sources: source
+    sources: source,
+    model_provider,
+    model_id
   }
   const db = new PageAssitDatabase()
   await db.addMessage(message)

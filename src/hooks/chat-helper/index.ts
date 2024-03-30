@@ -11,7 +11,9 @@ export const saveMessageOnError = async ({
   historyId,
   selectedModel,
   setHistoryId,
-  isRegenerating
+  isRegenerating,
+  model_id,
+  model_provider
 }: {
   e: any
   setHistory: (history: ChatHistory) => void
@@ -22,7 +24,9 @@ export const saveMessageOnError = async ({
   historyId: string | null
   selectedModel: string
   setHistoryId: (historyId: string) => void
-  isRegenerating: boolean
+  isRegenerating: boolean,
+  model_provider?: string
+  model_id?: string
 }) => {
   if (
     e?.name === "AbortError" ||
@@ -52,7 +56,9 @@ export const saveMessageOnError = async ({
           userMessage,
           [image],
           [],
-          1
+          1,
+          model_provider,
+          model_id
         )
       }
       await saveMessage(
@@ -62,7 +68,9 @@ export const saveMessageOnError = async ({
         botMessage,
         [],
         [],
-        2
+        2,
+        model_provider,
+        model_id
       )
     } else {
       const newHistoryId = await saveHistory(userMessage)
@@ -84,7 +92,9 @@ export const saveMessageOnError = async ({
         botMessage,
         [],
         [],
-        2
+        2,
+        model_provider,
+        model_id
       )
       setHistoryId(newHistoryId.id)
     }
@@ -103,7 +113,9 @@ export const saveMessageOnSuccess = async ({
   message,
   image,
   fullText,
-  source
+  source,
+  model_provider,
+  model_id
 }: {
   historyId: string | null
   setHistoryId: (historyId: string) => void
@@ -113,6 +125,8 @@ export const saveMessageOnSuccess = async ({
   image: string
   fullText: string
   source: any[]
+  model_provider?: string
+  model_id?: string
 }) => {
   if (historyId) {
     if (!isRegenerate) {
@@ -123,7 +137,9 @@ export const saveMessageOnSuccess = async ({
         message,
         [image],
         [],
-        1
+        1,
+        model_provider,
+        model_id
       )
     }
     await saveMessage(
@@ -133,7 +149,9 @@ export const saveMessageOnSuccess = async ({
       fullText,
       [],
       source,
-      2
+      2,
+      model_provider,
+      model_id
     )
   } else {
     const newHistoryId = await saveHistory(message)
@@ -144,7 +162,9 @@ export const saveMessageOnSuccess = async ({
       message,
       [image],
       [],
-      1
+      1,
+      model_provider,
+      model_id
     )
     await saveMessage(
       newHistoryId.id,
@@ -153,7 +173,9 @@ export const saveMessageOnSuccess = async ({
       fullText,
       [],
       source,
-      2
+      2,
+      model_provider,
+      model_id
     )
     setHistoryId(newHistoryId.id)
   }

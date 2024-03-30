@@ -1,4 +1,5 @@
 import { Message } from "@/types/message"
+import { ModelConfig } from "@/types/models"
 import { create } from "zustand"
 type ReactStyleStateSetter<T> = T | ((prev: T) => T)
 
@@ -30,8 +31,8 @@ type State = {
   setIsLoading: (isLoading: boolean) => void
   isProcessing: boolean
   setIsProcessing: (isProcessing: boolean) => void
-  selectedModel: string | null
-  setSelectedModel: (selectedModel: string) => void
+  selectedModel: ModelConfig | null
+  setSelectedModel: (selectedModel: ModelConfig) => void
   chatMode: "normal" | "rag"
   setChatMode: (chatMode: "normal" | "rag") => void
   isEmbedding: boolean
@@ -49,7 +50,7 @@ type State = {
   selectedQuickPrompt: string | null
   setSelectedQuickPrompt: (selectedQuickPrompt: string) => void
 }
-
+ 
 export const useStoreMessageOption = create<State>((set) => ({
   messages: [],
   setMessages: (newArrOrSetterFn) => {

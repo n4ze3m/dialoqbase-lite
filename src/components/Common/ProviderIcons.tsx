@@ -4,7 +4,7 @@ import { OpenRouterIcon } from "../Icons/OpenRouter"
 import { OpenAiMonoIcon } from "../Icons/OpenAIMono"
 import { AnthropicMonoIcon } from "../Icons/AnthropicMono"
 import { FireworksMonoIcon } from "../Icons/FireworksMono"
-import { GeminiMonoIcon } from "../Icons/Gemini copy"
+import { GeminiMonoIcon } from "../Icons/GeminiMono"
 import { GroqMonoIcon } from "../Icons/GroqMono"
 
 export const ProviderIcons = ({
