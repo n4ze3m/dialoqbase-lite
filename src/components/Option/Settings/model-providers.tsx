@@ -12,6 +12,11 @@ import { getAllProviders } from "@/db/provider"
 import { ConfigOpenAI } from "./Providers/OpenAI"
 import { AnthropicIcon } from "@/components/Icons/Anthropic"
 import { ConfigAnthropic } from "./Providers/Anthropic"
+import { GeminiIcon } from "@/components/Icons/Gemini"
+import { ConifgGemini } from "./Providers/Gemini"
+import { GroqIcon } from "@/components/Icons/Groq"
+import { ConifgGroq } from "./Providers/Groq"
+import { OpenRouterIcon } from "@/components/Icons/OpenRouter"
 
 export const SettingsModelProviders = () => {
   const { t } = useTranslation("settings")
@@ -39,19 +44,6 @@ export const SettingsModelProviders = () => {
                 items={[
                   {
                     key: "1",
-                    label: <FireworksIcon className="dark:text-white! h-5" />,
-                    children: (
-                      <ConifgFireworks apiKey={data?.fireworks?.apiKey || ""} />
-                    )
-                  }
-                ]}
-              />
-              <Collapse
-                size="large"
-                defaultActiveKey={["1"]}
-                items={[
-                  {
-                    key: "1",
                     label: <OpenAiIcon className="dark:text-white h-7" />,
                     children: (
                       <ConfigOpenAI
@@ -64,14 +56,25 @@ export const SettingsModelProviders = () => {
                   }
                 ]}
               />
-
               <Collapse
                 size="large"
-                defaultActiveKey={["1"]}
                 items={[
                   {
                     key: "1",
-                    label: <AnthropicIcon className="dark:text-white h-5" />,
+                    label: <FireworksIcon className="dark:text-white! h-5" />,
+                    children: (
+                      <ConifgFireworks apiKey={data?.fireworks?.apiKey || ""} />
+                    )
+                  }
+                ]}
+              />
+
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: "1",
+                    label: <AnthropicIcon className="dark:text-white h-4" />,
                     children: (
                       <ConfigAnthropic
                         baseUrl={
@@ -81,6 +84,46 @@ export const SettingsModelProviders = () => {
                         apiKey={data?.anthropic?.apiKey || ""}
                       />
                     )
+                  }
+                ]}
+              />
+
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: "1",
+                    label: <GeminiIcon className="dark:text-white h-7" />,
+                    children: (
+                      <ConifgGemini apiKey={data?.google?.apiKey || ""} />
+                    )
+                  }
+                ]}
+              />
+
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: "1",
+                    label: <GroqIcon className="dark:text-white h-7" />,
+                    children: <ConifgGroq apiKey={data?.groq?.apiKey || ""} />
+                  }
+                ]}
+              />
+
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: "1",
+                    label: <div className="inline-flex gap-2 items-center">
+                      <OpenRouterIcon className="dark:text-white h-7" />
+                      <span className="text-lg">
+                        OpenRouter
+                      </span>
+                    </div>,
+                    children: <ConifgGroq apiKey={data?.groq?.apiKey || ""} />
                   }
                 ]}
               />

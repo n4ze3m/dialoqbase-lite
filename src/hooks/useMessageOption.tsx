@@ -208,7 +208,7 @@ export const useMessageOption = () => {
             if (message.id === generateMessageId) {
               return {
                 ...message,
-                message: fullText
+                message: fullText.slice(0, -1) + "▋"
               }
             }
             return message
@@ -291,9 +291,6 @@ export const useMessageOption = () => {
     history: ChatHistory,
     signal: AbortSignal
   ) => {
-    if (image.length > 0) {
-      image = `data:image/jpeg;base64,${image.split(",")[1]}`
-    }
     const modelInfo = await getModelInfo(selectedModel)
 
     const chatModel = await dialoqChatModel({
@@ -305,6 +302,15 @@ export const useMessageOption = () => {
       modelName: selectedModel,
       provider: modelInfo.model_provider.key as any
     })
+
+    if (image.length > 0) {
+      if (modelInfo.provider === "google") {
+        image = `data:image/png;base64,${image.split(",")[1]}`
+      } else {
+        image = `data:image/jpeg;base64,${image.split(",")[1]}`
+      }
+    }
+
     let newMessage: Message[] = []
 
     let generateMessageId = generateID()
@@ -360,9 +366,12 @@ export const useMessageOption = () => {
               type: "text"
             },
             {
-              image_url: {
-                url: image
-              },
+              image_url:
+                modelInfo.provider !== "google"
+                  ? {
+                      url: image
+                    }
+                  : image,
               type: "image_url"
             }
           ]
@@ -406,7 +415,7 @@ export const useMessageOption = () => {
             if (message.id === generateMessageId) {
               return {
                 ...message,
-                message: fullText
+                message: fullText.slice(0, -1) + "▋"
               }
             }
             return message
@@ -414,6 +423,18 @@ export const useMessageOption = () => {
         })
         count++
       }
+
+      setMessages((prev) => {
+        return prev.map((message) => {
+          if (message.id === generateMessageId) {
+            return {
+              ...message,
+              message: fullText.slice(0, -1)
+            }
+          }
+          return message
+        })
+      })
 
       setHistory([
         ...history,

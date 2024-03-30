@@ -10,7 +10,12 @@ export type AiProvider = {
 export const AVAILABLE_PROVIDERS = [
     "fireworks",
     "openai",
-    "anthropic"
+    "anthropic",
+    "google",
+    "groq",
+    "local",
+    "openrouter",
+    "together"
 ] as const
 
 

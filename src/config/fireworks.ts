@@ -14,16 +14,10 @@ export const DEFAULT_FIREWORKS_MODELS: ModelConfig[] = [
     provider: "fireworks"
   },
   {
-    model_id: "accounts/fireworks/models/firellava-13b",
+    model_id: "accounts/fireworks/models/firellava-13b-dialoq",
     name: "Firellava 13B",
     fucntion_call: true,
     provider: "fireworks",
     vision: true
-  },
-  {
-    model_id: "accounts/fireworks/models/qwen-72b-chat",
-    name: "Qwen 72B",
-    fucntion_call: true,
-    provider: "fireworks"
   }
 ]

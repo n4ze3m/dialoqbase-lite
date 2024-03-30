@@ -1,37 +1,34 @@
 import { SaveButton } from "@/components/Common/SaveButton"
-import { DEFAULT_OPENAI_MODELS } from "@/config/openai"
+import { DEFAULT_GROQ_MODELS } from "@/config/groq"
 import { upsertModels } from "@/db/model"
 import { upsertProvider } from "@/db/provider"
-import { cleanUrl } from "@/libs/clean-url"
-import { isValidOpenAiApiKey } from "@/validate/openai"
+import { isValidGeminiApiKey } from "@/validate/gemini"
+import { isValidGroqApiKey } from "@/validate/groq"
 import { useMutation } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
 import { useTranslation } from "react-i18next"
 
 type Props = {
   apiKey: string
-  baseUrl: string
 }
 
-export const ConfigOpenAI = ({ apiKey, baseUrl }: Props) => {
+export const ConifgGroq = ({ apiKey }: Props) => {
   const { t } = useTranslation("modelProvider")
   const { message } = App.useApp()
   const [form] = Form.useForm()
   const { mutate: validateApiKey, isPending } = useMutation({
-    mutationFn: ({ apiKey, baseUrl }: { apiKey: string; baseUrl: string }) =>
-      isValidOpenAiApiKey({ baseUrl, apiKey }),
+    mutationFn: isValidGroqApiKey,
     onSuccess: async () => {
       await upsertProvider({
         apiKey: form.getFieldValue("apiKey"),
-        baseUrl: cleanUrl(form.getFieldValue("baseUrl")),
-        key: "openai",
-        name: "OpenAI"
+        key: "groq",
+        name: "Groq"
       })
-      await upsertModels(DEFAULT_OPENAI_MODELS)
-      message.success(t("openai.apiKey.valid"))
+      await upsertModels(DEFAULT_GROQ_MODELS)
+      message.success(t("groq.apiKey.valid"))
     },
     onError: () => {
-      message.error(t("openai.apiKey.invalid"))
+      message.error(t("groq.apiKey.invalid"))
     }
   })
 
@@ -40,25 +37,17 @@ export const ConfigOpenAI = ({ apiKey, baseUrl }: Props) => {
       layout="vertical"
       form={form}
       onFinish={async (values) => {
-        validateApiKey(values)
+        validateApiKey(values.apiKey)
       }}
       initialValues={{
-        apiKey,
-        baseUrl
+        apiKey
       }}>
       <Form.Item
-        name="baseUrl"
-        label={t("openai.baseUrl.label")}
-        help={t("openai.baseUrl.help")}>
-        <Input placeholder={t("openai.baseUrl.placeholder")} size="large" />
-      </Form.Item>
-
-      <Form.Item
         name="apiKey"
-        label={t("openai.apiKey.label")}
-        help={t("openai.apiKey.help")}>
+        label={t("groq.apiKey.label")}
+        help={t("groq.apiKey.help")}>
         <Input.Password
-          placeholder={t("openai.apiKey.placeholder")}
+          placeholder={t("groq.apiKey.placeholder")}
           size="large"
         />
       </Form.Item>

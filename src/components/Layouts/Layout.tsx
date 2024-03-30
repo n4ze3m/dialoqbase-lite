@@ -76,8 +76,7 @@ export default function OptionLayout({
                 <div>
                   <NavLink
                     to="/"
-                    className="text-gray-500 items-center dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                    >
+                    className="text-gray-500 items-center dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <ChevronLeft className="w-6 h-6" />
                   </NavLink>
                 </div>

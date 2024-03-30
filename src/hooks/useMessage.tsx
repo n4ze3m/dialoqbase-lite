@@ -209,9 +209,7 @@ ${e?.message}
   }
 
   const normalChatMode = async (message: string, image: string) => {
-    if (image.length > 0) {
-      image = `data:image/jpeg;base64,${image.split(",")[1]}`
-    }
+   
     abortControllerRef.current = new AbortController()
 
    
@@ -227,6 +225,14 @@ ${e?.message}
       modelName: selectedModel,
       provider: modelInfo.model_provider.key as any
     })
+
+    if (image.length > 0) {
+      if(modelInfo.provider === "google") {
+        image = `data:image/png;base64,${image.split(",")[1]}`
+      } else {
+        image = `data:image/jpeg;base64,${image.split(",")[1]}`
+      }
+    }
     let newMessage: Message[] = [
       ...messages,
       {
