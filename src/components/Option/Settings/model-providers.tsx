@@ -14,6 +14,8 @@ import { GroqIcon } from "@/components/Icons/Groq"
 import { ConifgGroq } from "./Providers/Groq"
 import { OpenRouterIcon } from "@/components/Icons/OpenRouter"
 import { ConifgOpenRouter } from "./Providers/OpenRouter"
+import { TogtherIcon } from "@/components/Icons/Togther"
+import { ConifgTogether } from "./Providers/Together"
 
 export const SettingsModelProviders = () => {
   const { t } = useTranslation("settings")
@@ -103,17 +105,6 @@ export const SettingsModelProviders = () => {
                 items={[
                   {
                     key: "1",
-                    label: <GroqIcon className="dark:text-white h-7" />,
-                    children: <ConifgGroq apiKey={data?.groq?.apiKey || ""} />
-                  }
-                ]}
-              />
-
-              <Collapse
-                size="large"
-                items={[
-                  {
-                    key: "1",
                     label: (
                       <div className="inline-flex gap-2 items-center">
                         <OpenRouterIcon className="dark:text-white h-7" />
@@ -125,6 +116,30 @@ export const SettingsModelProviders = () => {
                         apiKey={data?.openrouter?.apiKey || ""}
                       />
                     )
+                  }
+                ]}
+              />
+
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: "1",
+                    label: <TogtherIcon className="dark:text-white h-7" />,
+                    children: (
+                      <ConifgTogether apiKey={data?.together?.apiKey || ""} />
+                    )
+                  }
+                ]}
+              />
+
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: "1",
+                    label: <GroqIcon className="dark:text-white h-7" />,
+                    children: <ConifgGroq apiKey={data?.groq?.apiKey || ""} />
                   }
                 ]}
               />

@@ -6,6 +6,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
 import { ChatGroq } from "@langchain/groq"
 import { chromeRunTime } from "./runtime"
 import { openRouterModel } from "@/utils/open-router"
+import { ChatTogetherAI } from "@langchain/community/chat_models/togetherai"
 
 type Props = {
   provider: (typeof AVAILABLE_PROVIDERS)[number]
@@ -62,6 +63,11 @@ export const dialoqChatModel = async ({
       return await openRouterModel({
         apiKey: config.apiKey,
         modelName
+      })
+    case "together":
+      return new ChatTogetherAI({
+        modelName,
+        togetherAIApiKey: config.apiKey
       })
     default:
       throw new Error(`Provider ${provider} not supported`)
