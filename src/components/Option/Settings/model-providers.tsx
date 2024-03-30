@@ -1,9 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { Collapse, Form, InputNumber, Select, Skeleton } from "antd"
-import { useState } from "react"
-import { SaveButton } from "~/components/Common/SaveButton"
-import { setOllamaURL as saveOllamaURL } from "~/services/ollama"
-import { SettingPrompt } from "./prompt"
+import { useQuery } from "@tanstack/react-query"
+import { Collapse, Skeleton } from "antd"
 import { useTranslation } from "react-i18next"
 import { OpenAiIcon } from "@/components/Icons/OpenAI"
 import { FireworksIcon } from "@/components/Icons/Fireworks"
@@ -17,6 +13,7 @@ import { ConifgGemini } from "./Providers/Gemini"
 import { GroqIcon } from "@/components/Icons/Groq"
 import { ConifgGroq } from "./Providers/Groq"
 import { OpenRouterIcon } from "@/components/Icons/OpenRouter"
+import { ConifgOpenRouter } from "./Providers/OpenRouter"
 
 export const SettingsModelProviders = () => {
   const { t } = useTranslation("settings")
@@ -117,13 +114,17 @@ export const SettingsModelProviders = () => {
                 items={[
                   {
                     key: "1",
-                    label: <div className="inline-flex gap-2 items-center">
-                      <OpenRouterIcon className="dark:text-white h-7" />
-                      <span className="text-lg">
-                        OpenRouter
-                      </span>
-                    </div>,
-                    children: <ConifgGroq apiKey={data?.groq?.apiKey || ""} />
+                    label: (
+                      <div className="inline-flex gap-2 items-center">
+                        <OpenRouterIcon className="dark:text-white h-7" />
+                        <span className="text-lg">OpenRouter</span>
+                      </div>
+                    ),
+                    children: (
+                      <ConifgOpenRouter
+                        apiKey={data?.openrouter?.apiKey || ""}
+                      />
+                    )
                   }
                 ]}
               />

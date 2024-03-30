@@ -2,14 +2,20 @@ import { ChatOpenAI } from "@langchain/openai"
 
 export const openRouterModel = async ({
   modelName,
-  apiKey
+  apiKey,
+  maxTokens,
+  maxRetries
 }: {
   modelName: string
   apiKey: string
+  maxRetries?: number
+  maxTokens?: number
 }) => {
   return new ChatOpenAI({
     modelName: modelName,
     openAIApiKey: apiKey,
+    maxTokens,
+    maxRetries,
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       apiKey: apiKey,

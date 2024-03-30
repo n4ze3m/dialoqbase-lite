@@ -59,7 +59,7 @@ export const dialoqChatModel = async ({
         apiKey: config.apiKey
       })
     case "openrouter":
-      return openRouterModel({
+      return await openRouterModel({
         apiKey: config.apiKey,
         modelName
       })
