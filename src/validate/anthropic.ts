@@ -2,7 +2,7 @@ import { cleanUrl } from "@/libs/clean-url"
 import { ChatAnthropic } from "@langchain/anthropic";
 
 
-export const isValidAnthropicApiKey = async (baseUrl: string, apiKey: string) => {
+export const isValidAnthropicApiKey = async ({apiKey,baseUrl}:{baseUrl: string, apiKey: string}) => {
     const chat = new ChatAnthropic({
         anthropicApiKey: apiKey,
         anthropicApiUrl: cleanUrl(baseUrl),

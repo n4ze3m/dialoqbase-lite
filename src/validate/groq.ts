@@ -1,6 +1,6 @@
 import { ChatGroq } from "@langchain/groq"
 
-export const isValidGroqApiKey = async (apiKey: string) => {
+export const isValidGroqApiKey = async ({apiKey}:{apiKey: string}) => {
   const chat = new ChatGroq({
     apiKey: apiKey,
     maxRetries:0,

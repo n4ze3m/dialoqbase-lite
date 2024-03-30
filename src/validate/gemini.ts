@@ -1,6 +1,6 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
 
-export const isValidGeminiApiKey = async (apiKey: string) => {
+export const isValidGeminiApiKey = async ({apiKey}:{apiKey: string}) => {
   const chat = new ChatGoogleGenerativeAI({
     apiKey: apiKey,
     maxOutputTokens: 10,

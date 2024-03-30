@@ -19,7 +19,7 @@ export const ConfigAnthropic = ({ apiKey, baseUrl }: Props) => {
   const [form] = Form.useForm()
   const { mutate: validateApiKey, isPending } = useMutation({
     mutationFn: ({ apiKey, baseUrl }: { apiKey: string; baseUrl: string }) =>
-      isValidAnthropicApiKey(baseUrl, apiKey),
+      isValidAnthropicApiKey({ baseUrl, apiKey }),
     onSuccess: async () => {
       await upsertProvider({
         apiKey: form.getFieldValue("apiKey"),

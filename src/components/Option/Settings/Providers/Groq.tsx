@@ -2,7 +2,6 @@ import { SaveButton } from "@/components/Common/SaveButton"
 import { DEFAULT_GROQ_MODELS } from "@/config/groq"
 import { upsertModels } from "@/db/model"
 import { upsertProvider } from "@/db/provider"
-import { isValidGeminiApiKey } from "@/validate/gemini"
 import { isValidGroqApiKey } from "@/validate/groq"
 import { useMutation } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
@@ -37,7 +36,7 @@ export const ConifgGroq = ({ apiKey }: Props) => {
       layout="vertical"
       form={form}
       onFinish={async (values) => {
-        validateApiKey(values.apiKey)
+        validateApiKey(values)
       }}
       initialValues={{
         apiKey

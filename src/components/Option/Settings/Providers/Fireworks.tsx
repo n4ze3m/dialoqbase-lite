@@ -36,7 +36,7 @@ export const ConifgFireworks = ({ apiKey }: Props) => {
       layout="vertical"
       form={form}
       onFinish={async (values) => {
-        validateApiKey(values.apiKey)
+        validateApiKey(values)
       }}
       initialValues={{
         apiKey
