@@ -17,6 +17,7 @@ import { getAllPrompts } from "@/db"
 import { ShareBtn } from "~/components/Common/ShareBtn"
 import { useTranslation } from "react-i18next"
 import { getAllModels } from "@/db/model"
+import { ProviderIcons } from "../Common/ProviderIcons"
 
 export default function OptionLayout({
   children
@@ -106,16 +107,25 @@ export default function OptionLayout({
                   size="large"
                   loading={isModelsLoading || isModelsFetching}
                   filterOption={(input, option) =>
-                    option!.label.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0 ||
-                    option!.value.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0
+                    option.label.key
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
                   }
                   showSearch
                   placeholder={t("common:selectAModel")}
                   className="w-64 "
                   options={models?.map((model) => ({
-                    label: model.name,
+                    label: (
+                      <span
+                        key={model.name}
+                        className="flex flex-row gap-3 items-center">
+                        <ProviderIcons
+                          model={model.name}
+                          provider={model.provider}
+                        />
+                        {model.name}
+                      </span>
+                    ),
                     value: model.model_id
                   }))}
                 />
@@ -134,7 +144,6 @@ export default function OptionLayout({
                   onChange={handlePromptChange}
                   value={selectedSystemPrompt}
                   filterOption={(input, option) =>
-                    //@ts-ignore
                     option.label.key
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
