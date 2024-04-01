@@ -147,7 +147,7 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
         textAreaFocus()
         await sendMessage({
           image: value.image,
-          message: value.message.trim()
+          message: value.message.trim(),
         })
       })()
     }
@@ -176,7 +176,7 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
         </div>
       </div>
       <div>
-        <div className="flex bg-white">
+        <div className="flex bg-white dark:bg-transparent">
           <form
             onSubmit={form.onSubmit(async (value) => {
               if (!selectedModel || selectedModel?.model_id?.length === 0) {
