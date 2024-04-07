@@ -22,5 +22,29 @@ export const DEFAULT_OPENAI_MODELS: ModelConfig[] = [
     provider: "openai",
     vision: true,
     type: "chat"
+  },
+  {
+    model_id: "text-embedding-3-large-dialoq",
+    name: "Text Embedding 3 Large",
+    fucntion_call: false,
+    provider: "openai",
+    vision: false,
+    type: "embedding"
+  },
+  {
+    model_id: "text-embedding-3-small-dialoq",
+    name: "Text Embedding 3 Small",
+    fucntion_call: false,
+    provider: "openai",
+    vision: false,
+    type: "embedding"
+  },
+  {
+    model_id: "text-embedding-ada-002-dialoq",
+    name: "Text Embedding Ada 002",
+    fucntion_call: false,
+    provider: "openai",
+    vision: false,
+    type: "embedding"
   }
 ]
