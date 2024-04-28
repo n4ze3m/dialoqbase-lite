@@ -22,6 +22,7 @@ import { generateID, getModelInfo } from "@/db/util"
 import { dialoqChatModel } from "@/libs/model"
 import { useDialoq } from "@/context"
 import { saveMessageOnError, saveMessageOnSuccess } from "./chat-helper"
+import { useStorage } from "@plasmohq/storage/hook"
 
 export const useMessageOption = () => {
   const {
@@ -30,6 +31,7 @@ export const useMessageOption = () => {
     controller: abortController,
     setController: setAbortController
   } = useDialoq()
+  const [selectedModel, setSelectedModel] = useStorage("selectedModel")
 
   const {
     history,
@@ -43,8 +45,6 @@ export const useMessageOption = () => {
     setIsLoading,
     isProcessing,
     setIsProcessing,
-    selectedModel,
-    setSelectedModel,
     chatMode,
     setChatMode,
     speechToTextLanguage,

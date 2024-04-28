@@ -1,3 +1,5 @@
+import { deleteModelByProvider } from "./model"
+
 export type AiProvider = {
   key: string
   name: string
@@ -145,4 +147,19 @@ export const getProviderByKey = async (
 ): Promise<AiProvider | undefined> => {
   const db = new DialoqAiProviders()
   return db.getProviderByKey(key)
+}
+
+export const getConfiguredProviders = async () => {
+  const db = new DialoqAiProviders()
+  const providers = await db.getProviders()
+  return providers.map((provider) => ({
+    label: provider.name,
+    value: provider.key
+  }))
+}
+
+export const deleteProvider = async (key: string): Promise<void> => {
+  const db = new DialoqAiProviders()
+  await db.deleteProvider(key)
+  await deleteModelByProvider(key)
 }

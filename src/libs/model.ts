@@ -24,6 +24,8 @@ export const dialoqChatModel = async ({
   provider
 }: Props) => {
   modelName = modelName.replace("-dialoq", "")
+  modelName = modelName.replace(/_dialoqbase_[0-9]+$/, "");
+
   switch (provider) {
     case "fireworks":
       await chromeRunTime("https://api.fireworks.ai")

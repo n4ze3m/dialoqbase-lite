@@ -17,11 +17,13 @@ import {
 import { MemoryVectorStore } from "langchain/vectorstores/memory"
 import { memoryEmbedding } from "@/utils/memory-embeddings"
 import { getModelById } from "@/db/model"
-import {  dialoqChatModel } from "@/libs/model"
+import { dialoqChatModel } from "@/libs/model"
 import { getModelInfo } from "@/db/util"
-import { notification } from "antd"
+import { useStorage } from "@plasmohq/storage/hook"
 
 export const useMessage = () => {
+  const [selectedModel, setSelectedModel] = useStorage("selectedModel")
+
   const {
     history,
     messages,
@@ -36,8 +38,6 @@ export const useMessage = () => {
     setIsLoading,
     isProcessing,
     setIsProcessing,
-    selectedModel,
-    setSelectedModel,
     chatMode,
     setChatMode,
     setIsEmbedding,
@@ -209,10 +209,7 @@ ${e?.message}
   }
 
   const normalChatMode = async (message: string, image: string) => {
-   
     abortControllerRef.current = new AbortController()
-
-   
 
     const modelInfo = await getModelInfo(selectedModel)
 
@@ -227,7 +224,7 @@ ${e?.message}
     })
 
     if (image.length > 0) {
-      if(modelInfo.provider === "google") {
+      if (modelInfo.provider === "google") {
         image = `data:image/png;base64,${image.split(",")[1]}`
       } else {
         image = `data:image/jpeg;base64,${image.split(",")[1]}`
