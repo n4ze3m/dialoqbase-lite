@@ -5,6 +5,7 @@ export interface ModelConfig {
     provider: string;
     vision?: boolean;
     type: "chat" | "embedding";
+    context_size?: number;
 }
 
 export interface Model extends ModelConfig {

@@ -1,4 +1,3 @@
-import { AVAILABLE_PROVIDERS } from "@/db/provider"
 import { ChatFireworks } from "@langchain/community/chat_models/fireworks"
 import { ChatOpenAI } from "@langchain/openai"
 import { ChatAnthropic } from "@langchain/anthropic"
@@ -9,7 +8,7 @@ import { openRouterModel } from "@/utils/open-router"
 import { ChatTogetherAI } from "@langchain/community/chat_models/togetherai"
 
 type Props = {
-  provider: (typeof AVAILABLE_PROVIDERS)[number]
+  provider: string
   modelName: string
   config: {
     apiKey: string
@@ -70,6 +69,13 @@ export const dialoqChatModel = async ({
         togetherAIApiKey: config.apiKey
       })
     default:
-      throw new Error(`Provider ${provider} not supported`)
+      return new ChatOpenAI({
+        modelName: modelName,
+        openAIApiKey: config.apiKey,
+        configuration: {
+          baseURL: config.baseUrl,
+          apiKey: config.apiKey
+        }
+      })
   }
 }

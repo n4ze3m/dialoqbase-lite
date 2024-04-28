@@ -6,13 +6,15 @@ export const DEFAULT_OPENROUTER_MODELS: ModelConfig[] = [
     name: "Mistral 7B Instruct (free)",
     fucntion_call: false,
     provider: "openrouter",
-    type: "chat"
+    type: "chat",
+    context_size: 30_000
   },
   {
     model_id: "nousresearch/nous-capybara-7b:free-dialoq",
     name: "Nous Capybara 7B (free)",
     fucntion_call: true,
     provider: "openrouter",
-    type: "chat"
+    type: "chat",
+    context_size: 4096
   }
 ]

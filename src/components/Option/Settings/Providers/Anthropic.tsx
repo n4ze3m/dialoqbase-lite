@@ -1,21 +1,21 @@
 import { SaveButton } from "@/components/Common/SaveButton"
 import { DEFAULT_ANTHROPIC_MODELS } from "@/config/anthropic"
 import { upsertModels } from "@/db/model"
-import { upsertProvider } from "@/db/provider"
+import { AiProvider, upsertProvider } from "@/db/provider"
 import { cleanUrl } from "@/libs/clean-url"
 import { isValidAnthropicApiKey } from "@/validate/anthropic"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
 import { useTranslation } from "react-i18next"
 
 type Props = {
-  apiKey: string
-  baseUrl: string
+  provider: AiProvider
 }
 
-export const ConfigAnthropic = ({ apiKey, baseUrl }: Props) => {
+export const ConfigAnthropic = ({ provider }: Props) => {
   const { t } = useTranslation("modelProvider")
   const { message } = App.useApp()
+  const queryClient = useQueryClient()
   const [form] = Form.useForm()
   const { mutate: validateApiKey, isPending } = useMutation({
     mutationFn: ({ apiKey, baseUrl }: { apiKey: string; baseUrl: string }) =>
@@ -28,6 +28,9 @@ export const ConfigAnthropic = ({ apiKey, baseUrl }: Props) => {
         name: "Anthropic"
       })
       await upsertModels(DEFAULT_ANTHROPIC_MODELS)
+      queryClient.invalidateQueries({
+        queryKey: ["fetchModel"]
+      })
       message.success(t("anthropic.apiKey.valid"))
     },
     onError: () => {
@@ -43,8 +46,8 @@ export const ConfigAnthropic = ({ apiKey, baseUrl }: Props) => {
         validateApiKey(values)
       }}
       initialValues={{
-        apiKey,
-        baseUrl
+        apiKey: provider?.apiKey,
+        baseUrl: provider?.baseUrl || "https://api.anthropic.com"
       }}>
       <Form.Item
         name="baseUrl"

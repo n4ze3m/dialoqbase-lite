@@ -1,20 +1,21 @@
 import { SaveButton } from "@/components/Common/SaveButton"
 import { DEFAULT_GOOGLE_GEMINI_MODELS } from "@/config/gemini"
 import { upsertModels } from "@/db/model"
-import { upsertProvider } from "@/db/provider"
+import { AiProvider, upsertProvider } from "@/db/provider"
 import { isValidGeminiApiKey } from "@/validate/gemini"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
 import { useTranslation } from "react-i18next"
 
 type Props = {
-  apiKey: string
+  provider: AiProvider
 }
 
-export const ConifgGemini = ({ apiKey }: Props) => {
+export const ConifgGemini = ({ provider }: Props) => {
   const { t } = useTranslation("modelProvider")
   const { message } = App.useApp()
   const [form] = Form.useForm()
+  const queryClient = useQueryClient()
   const { mutate: validateApiKey, isPending } = useMutation({
     mutationFn: isValidGeminiApiKey,
     onSuccess: async () => {
@@ -24,6 +25,9 @@ export const ConifgGemini = ({ apiKey }: Props) => {
         name: "google"
       })
       await upsertModels(DEFAULT_GOOGLE_GEMINI_MODELS)
+      queryClient.invalidateQueries({
+        queryKey: ["fetchModel"]
+      })
       message.success(t("google.apiKey.valid"))
     },
     onError: () => {
@@ -39,7 +43,7 @@ export const ConifgGemini = ({ apiKey }: Props) => {
         validateApiKey(values)
       }}
       initialValues={{
-        apiKey
+        apiKey: provider?.apiKey
       }}>
       <Form.Item
         name="apiKey"

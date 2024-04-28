@@ -277,6 +277,13 @@ export const useMessageOption = () => {
       })
 
       if (!errorSave) {
+        let newMessages = messages
+        if (newMessages.length > 0) {
+          if (newMessages[newMessages.length - 1].isBot) {
+            newMessages.pop()
+          }
+        }
+        setMessages(newMessages)
         notification.error({
           message: t("error"),
           description: e?.message || t("somethingWentWrong")
@@ -368,6 +375,7 @@ export const useMessageOption = () => {
       let humanMessage = new HumanMessage({
         content: message
       })
+
       if (image.length > 0) {
         humanMessage = new HumanMessage({
           content: [
@@ -491,6 +499,13 @@ export const useMessageOption = () => {
       })
 
       if (!errorSave) {
+        let newMessages = messages
+        if (newMessages.length > 0) {
+          if (newMessages[newMessages.length - 1].isBot) {
+            newMessages.pop()
+          }
+        }
+        setMessages(newMessages)
         notification.error({
           message: t("error"),
           description: e?.message || t("somethingWentWrong")

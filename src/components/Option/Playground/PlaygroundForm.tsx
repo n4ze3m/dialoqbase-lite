@@ -8,7 +8,6 @@ import { Checkbox, Dropdown, Switch, Tooltip } from "antd"
 import { Image } from "antd"
 import { useSpeechRecognition } from "~/hooks/useSpeechRecognition"
 import { useWebUI } from "~/store/webui"
-import { defaultEmbeddingModelForRag } from "~/services/ollama"
 import { ImageIcon, MicIcon, StopCircleIcon, X } from "lucide-react"
 import { getVariable } from "~/utils/select-varaible"
 import { useTranslation } from "react-i18next"
@@ -136,18 +135,11 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
           form.setFieldError("message", t("formError.noModel"))
           return
         }
-        if (webSearch) {
-          const defaultEM = await defaultEmbeddingModelForRag()
-          if (!defaultEM) {
-            form.setFieldError("message", t("formError.noEmbeddingModel"))
-            return
-          }
-        }
         form.reset()
         textAreaFocus()
         await sendMessage({
           image: value.image,
-          message: value.message.trim(),
+          message: value.message.trim()
         })
       })()
     }
@@ -182,13 +174,6 @@ export const PlaygroundForm = ({ dropedFile }: Props) => {
               if (!selectedModel || selectedModel?.model_id?.length === 0) {
                 form.setFieldError("message", t("formError.noModel"))
                 return
-              }
-              if (webSearch) {
-                const defaultEM = await defaultEmbeddingModelForRag()
-                // if (!defaultEM) {
-                //   form.setFieldError("message", t("formError.noEmbeddingModel"))
-                //   return
-                // }
               }
               form.reset()
               textAreaFocus()

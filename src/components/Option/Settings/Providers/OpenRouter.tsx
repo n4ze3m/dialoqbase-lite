@@ -1,20 +1,21 @@
 import { SaveButton } from "@/components/Common/SaveButton"
 import { DEFAULT_OPENROUTER_MODELS } from "@/config/openrouter"
 import { upsertModels } from "@/db/model"
-import { upsertProvider } from "@/db/provider"
+import { AiProvider, upsertProvider } from "@/db/provider"
 import { isValidOpenRouterApiKey } from "@/validate/openrouter"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
 import { useTranslation } from "react-i18next"
 
 type Props = {
-  apiKey: string
+  provider: AiProvider
 }
 
-export const ConifgOpenRouter = ({ apiKey }: Props) => {
+export const ConifgOpenRouter = ({ provider }: Props) => {
   const { t } = useTranslation("modelProvider")
   const { message } = App.useApp()
   const [form] = Form.useForm()
+  const queryClient = useQueryClient()
   const { mutate: validateApiKey, isPending } = useMutation({
     mutationFn: isValidOpenRouterApiKey,
     onSuccess: async () => {
@@ -24,6 +25,9 @@ export const ConifgOpenRouter = ({ apiKey }: Props) => {
         name: "Openrouter"
       })
       await upsertModels(DEFAULT_OPENROUTER_MODELS)
+      queryClient.invalidateQueries({
+        queryKey: ["fetchModel"]
+      })
       message.success(t("openrouter.apiKey.valid"))
     },
     onError: () => {
@@ -39,7 +43,7 @@ export const ConifgOpenRouter = ({ apiKey }: Props) => {
         validateApiKey(values)
       }}
       initialValues={{
-        apiKey
+        apiKey: provider?.apiKey
       }}>
       <Form.Item
         name="apiKey"
