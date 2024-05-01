@@ -9,10 +9,11 @@ import {
   Select,
   Form,
   message,
-  Switch
+  Switch,
+  Radio
 } from "antd"
 import { useState } from "react"
-import {Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { deleteModel, getAllModels, saveModel } from "@/db/model"
 import { getConfiguredProviders } from "@/db/provider"
@@ -24,16 +25,21 @@ export const ModelsBody = () => {
   const [open, setOpen] = useState(false)
   const { t } = useTranslation(["manageModels", "common"])
   const [selectedModel, setSelectedModel] = useStorage("selectedModel")
+  const [modelType, setModelType] = useState<"llm" | "embedding">("llm")
 
   const [form] = Form.useForm()
   const { data, status } = useQuery({
     queryKey: ["fetchAllModels"],
     queryFn: async () => {
       const models = await getAllModels({})
+      const embeddingModels = await getAllModels({
+        type: "embedding"
+      })
       const providers = await getConfiguredProviders()
       return {
         models,
-        providers
+        providers,
+        embeddingModels
       }
     }
   })
@@ -90,7 +96,6 @@ export const ModelsBody = () => {
     }
   })
 
-
   return (
     <div>
       <div>
@@ -98,11 +103,19 @@ export const ModelsBody = () => {
         <div className="mb-6">
           <div className="-ml-4 -mt-2 flex flex-wrap items-center justify-end sm:flex-nowrap">
             <div className="ml-4 mt-2 flex-shrink-0">
-              <button
-                onClick={() => setOpen(true)}
-                className="inline-flex items-center rounded-md border border-transparent bg-black px-2 py-2 text-md font-medium leading-4 text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50">
-                {t("addBtn")}
-              </button>
+              {modelType === "llm" ? (
+                <button
+                  onClick={() => setOpen(true)}
+                  className="inline-flex items-center rounded-md border border-transparent bg-black px-2 py-2 text-md font-medium leading-4 text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50">
+                  {t("addChatModel")}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setOpen(true)}
+                  className="inline-flex items-center rounded-md border border-transparent bg-black px-2 py-2 text-md font-medium leading-4 text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50">
+                  {t("addEmbeddingModel")}
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -110,48 +123,105 @@ export const ModelsBody = () => {
         {status === "pending" && <Skeleton paragraph={{ rows: 8 }} />}
 
         {status === "success" && (
-          <Table
-            columns={[
-              {
-                title: t("columns.name"),
-                dataIndex: "name",
-                key: "name"
-              },
-              {
-                title: t("columns.model_id"),
-                dataIndex: "model_id",
-                key: "model_id",
-                render: (model_id) =>
-                  model_id
-                    .replace("-dialoq", "")
-                    .replace(/_dialoqbase_[0-9]+$/, "")
-              },
-              {
-                title: t("columns.provider"),
-                dataIndex: "provider"
-              },
-              {
-                title: t("columns.actions"),
-                render: (_, record) => (
-                  <div className="flex gap-4">
-                    <Tooltip title={t("tooltip.delete")}>
-                      <button
-                        onClick={() => {
-                          if (window.confirm(t("confirm.delete"))) {
-                            deleteChatModel(record.model_id)
-                          }
-                        }}
-                        className="text-red-500 dark:text-red-400">
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </Tooltip>
-                  </div>
-                )
-              }
-            ]}
-            bordered
-            dataSource={data.models}
-          />
+          <div>
+            <div className="my-3 justify-end flex">
+              <Radio.Group
+                value={modelType}
+                onChange={(e) => setModelType(e.target.value)}>
+                <Radio.Button value="llm">Chat Model</Radio.Button>
+                <Radio.Button value="embedding">Embedding Model</Radio.Button>
+              </Radio.Group>
+            </div>
+            {modelType === "llm" && (
+              <Table
+                columns={[
+                  {
+                    title: t("columns.name"),
+                    dataIndex: "name",
+                    key: "name"
+                  },
+                  {
+                    title: t("columns.model_id"),
+                    dataIndex: "model_id",
+                    key: "model_id",
+                    render: (model_id) =>
+                      model_id
+                        .replace("-dialoq", "")
+                        .replace(/_dialoqbase_[0-9]+$/, "")
+                  },
+                  {
+                    title: t("columns.provider"),
+                    dataIndex: "provider"
+                  },
+                  {
+                    title: t("columns.actions"),
+                    render: (_, record) => (
+                      <div className="flex gap-4">
+                        <Tooltip title={t("tooltip.delete")}>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(t("confirm.delete"))) {
+                                deleteChatModel(record.model_id)
+                              }
+                            }}
+                            className="text-red-500 dark:text-red-400">
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </Tooltip>
+                      </div>
+                    )
+                  }
+                ]}
+                bordered
+                dataSource={data.models}
+              />
+            )}
+
+            {modelType === "embedding" && (
+              <Table
+                columns={[
+                  {
+                    title: t("columns.name"),
+                    dataIndex: "name",
+                    key: "name"
+                  },
+                  {
+                    title: t("columns.model_id"),
+                    dataIndex: "model_id",
+                    key: "model_id",
+                    render: (model_id) =>
+                      model_id
+                        .replace("-dialoq", "")
+                        .replace(/_dialoqbase_[0-9]+$/, "")
+                  },
+                  {
+                    title: t("columns.provider"),
+                    dataIndex: "provider"
+                  },
+                  {
+                    title: t("columns.actions"),
+                    render: (_, record) => (
+                      <div className="flex gap-4">
+                        <Tooltip title={t("tooltip.delete")}>
+                          <button
+                            onClick={() => {
+                              if (window.confirm(t("confirm.delete"))) {
+                                deleteChatModel(record.model_id)
+                              }
+                            }}
+                            className="text-red-500 dark:text-red-400">
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </Tooltip>
+                      </div>
+                    )
+                  }
+                ]}
+                bordered
+                dataSource={data.embeddingModels}
+              />
+            )}
+          </div>
         )}
       </div>
 

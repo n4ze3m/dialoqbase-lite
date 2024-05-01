@@ -2,10 +2,9 @@ import React from "react"
 import { cleanUrl } from "~/libs/clean-url"
 import {
   defaultEmbeddingModelForRag,
-  getOllamaURL,
   promptForRag,
   systemPromptForNonRag
-} from "~/services/ollama"
+} from "@/services/dialoqbase"
 import { useStoreMessage, type Message } from "~/store"
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
 import { getDataFromCurrentTab } from "~/libs/get-html"
@@ -101,7 +100,7 @@ export const useMessage = () => {
 
       const appendingIndex = newMessage.length - 1
       setMessages(newMessage)
-      const ollamaUrl = await getOllamaURL()
+      const ollamaUrl = ""
       const embeddingModle = await defaultEmbeddingModelForRag()
 
       const ollamaEmbedding = new OllamaEmbeddings({

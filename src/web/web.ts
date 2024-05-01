@@ -1,4 +1,4 @@
-import { getWebSearchPrompt } from "~/services/ollama"
+import { getWebSearchPrompt } from "@/services/dialoqbase"
 import { webGoogleSearch } from "./local-google"
 import { webDuckDuckGoSearch } from "./local-duckduckgo"
 import { getSearchProvider } from "@/services/search"

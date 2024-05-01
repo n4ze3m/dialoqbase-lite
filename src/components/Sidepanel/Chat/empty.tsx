@@ -4,12 +4,6 @@ import { RotateCcw } from "lucide-react"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useMessage } from "~/hooks/useMessage"
-import {
-  getAllModels,
-  getOllamaURL,
-  isOllamaRunning,
-  setOllamaURL as saveOllamaURL
-} from "~/services/ollama"
 
 export const EmptySidePanel = () => {
   const [ollamaURL, setOllamaURL] = useState<string>("")
@@ -22,12 +16,11 @@ export const EmptySidePanel = () => {
   } = useQuery({
     queryKey: ["ollamaStatus"],
     queryFn: async () => {
-      const ollamaURL = await getOllamaURL()
-      const isOk = await isOllamaRunning()
-      const models = await getAllModels({ returnEmpty: false })
+      const ollamaURL = ""
+      const models = []
 
       return {
-        isOk,
+        isOk: false,
         models,
         ollamaURL
       }
@@ -80,7 +73,6 @@ export const EmptySidePanel = () => {
 
               <button
                 onClick={() => {
-                  saveOllamaURL(ollamaURL)
                   refetch()
                 }}
                 className="inline-flex mt-4 items-center rounded-md border border-transparent bg-black px-2 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50 ">
@@ -93,7 +85,7 @@ export const EmptySidePanel = () => {
 
         {ollamaStatus === "success" && ollamaInfo.isOk && (
           <div className="mt-4">
-            <Select
+            {/* <Select
               onChange={(e) => {
                 setSelectedModel(e)
               }}
@@ -111,7 +103,7 @@ export const EmptySidePanel = () => {
                 label: model.name,
                 value: model.model
               }))}
-            />
+            /> */}
 
             <div className="mt-4">
               <div className="inline-flex items-center">

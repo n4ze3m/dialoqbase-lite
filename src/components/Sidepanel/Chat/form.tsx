@@ -7,7 +7,7 @@ import { toBase64 } from "~/libs/to-base64"
 import { Checkbox, Dropdown, Image, Tooltip } from "antd"
 import { useSpeechRecognition } from "~/hooks/useSpeechRecognition"
 import { useWebUI } from "~/store/webui"
-import { defaultEmbeddingModelForRag } from "~/services/ollama"
+import { defaultEmbeddingModelForRag } from "@/services/dialoqbase"
 import { ImageIcon, MicIcon, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 

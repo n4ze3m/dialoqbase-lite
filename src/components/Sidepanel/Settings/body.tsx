@@ -1,18 +1,15 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import React from "react"
 import {
-  getOllamaURL,
   systemPromptForNonRag,
   promptForRag,
-  setOllamaURL as saveOllamaURL,
   setPromptForRag,
   setSystemPromptForNonRag,
-  getAllModels,
   defaultEmbeddingChunkOverlap,
   defaultEmbeddingChunkSize,
   defaultEmbeddingModelForRag,
   saveForRag
-} from "~/services/ollama"
+} from "@/services/dialoqbase"
 
 import { Skeleton, Radio, Select, Form, InputNumber } from "antd"
 import { useDarkMode } from "~/hooks/useDarkmode"
@@ -41,33 +38,31 @@ export const SettingsBody = () => {
   const { data, status } = useQuery({
     queryKey: ["sidebarSettings"],
     queryFn: async () => {
-      const [
-        ollamaURL,
-        systemPrompt,
-        ragPrompt,
-        allModels,
-        chunkOverlap,
-        chunkSize,
-        defaultEM
-      ] = await Promise.all([
-        getOllamaURL(),
-        systemPromptForNonRag(),
-        promptForRag(),
-        getAllModels({ returnEmpty: true }),
-        defaultEmbeddingChunkOverlap(),
-        defaultEmbeddingChunkSize(),
-        defaultEmbeddingModelForRag()
-      ])
+      // const [
+      //   ollamaURL,
+      //   systemPrompt,
+      //   ragPrompt,
+      //   allModels,
+      //   chunkOverlap,
+      //   chunkSize,
+      //   defaultEM
+      // ] = await Promise.all([
+      //   systemPromptForNonRag(),
+      //   promptForRag(),
+      //   defaultEmbeddingChunkOverlap(),
+      //   defaultEmbeddingChunkSize(),
+      //   defaultEmbeddingModelForRag()
+      // ])
 
       return {
-        url: ollamaURL,
+        url: "ollamaURL",
         normalSystemPrompt: systemPrompt,
-        ragSystemPrompt: ragPrompt.ragPrompt,
-        ragQuestionPrompt: ragPrompt.ragQuestionPrompt,
-        models: allModels,
-        chunkOverlap,
-        chunkSize,
-        defaultEM
+        ragSystemPrompt: "ragPrompt.ragPrompt",
+        ragQuestionPrompt:" ragPrompt.ragQuestionPrompt",
+        models: "allModels",
+        chunkOverlap: "",
+        chunkSize: "",
+        defaultEM : ""
       }
     }
   })
@@ -179,25 +174,7 @@ export const SettingsBody = () => {
         )}
       </div>
 
-      <div className="border border-gray-300 dark:border-gray-700 rounded p-4 bg-white dark:bg-[#171717]">
-        <h2 className="text-md mb-4 font-semibold dark:text-white">
-          {t("ollamaSettings.heading")}
-        </h2>
-        <input
-          className="w-full border border-gray-300 dark:border-gray-700 rounded p-2 dark:bg-[#171717] dark:text-white dark:placeholder-gray-400"
-          value={ollamaURL}
-          type="url"
-          onChange={(e) => setOllamaURL(e.target.value)}
-          placeholder={t("ollamaSettings.settings.ollamaUrl.placeholder")}
-        />
-        <div className="flex justify-end">
-          <SaveButton
-            onClick={() => {
-              saveOllamaURL(ollamaURL)
-            }}
-          />
-        </div>
-      </div>
+
 
       <div className="border border-gray-300 dark:border-gray-700 rounded p-4 bg-white dark:bg-[#171717]">
         <h2 className="text-md mb-4 font-semibold dark:text-white">
@@ -226,7 +203,7 @@ export const SettingsBody = () => {
                 message: t("ollamaSettings.settings.ragSettings.model.required")
               }
             ]}>
-            <Select
+            {/* <Select
               size="large"
               filterOption={(input, option) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
@@ -240,7 +217,7 @@ export const SettingsBody = () => {
                 label: model.name,
                 value: model.model
               }))}
-            />
+            /> */}
           </Form.Item>
 
           <Form.Item

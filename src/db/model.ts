@@ -83,7 +83,7 @@ export const getAllModels = async ({
   type = "chat"
 }: {
   hidden?: boolean
-  type?: string
+  type?: "chat" | "embedding"
 }) => {
   const model = new DialoqAiModel()
   const models = await model.getModels()

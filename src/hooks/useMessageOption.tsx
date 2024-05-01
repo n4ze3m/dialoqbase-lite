@@ -2,7 +2,7 @@ import React from "react"
 import {
   geWebSearchFollowUpPrompt,
   systemPromptForNonRagOption
-} from "~/services/ollama"
+} from "@/services/dialoqbase"
 import { type ChatHistory } from "~/store/option"
 import { Message } from "@/types/message"
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
