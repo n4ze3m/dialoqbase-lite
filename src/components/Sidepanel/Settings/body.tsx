@@ -20,6 +20,7 @@ import { MoonIcon, SunIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useI18n } from "@/hooks/useI18n"
 import { getAllModels } from "@/db/model"
+import { ProviderIcons } from "@/components/Common/ProviderIcons"
 
 export const SettingsBody = () => {
   const { t } = useTranslation("settings")
@@ -174,7 +175,7 @@ export const SettingsBody = () => {
 
       <div className="border border-gray-300 dark:border-gray-700 rounded p-4 bg-white dark:bg-[#171717]">
         <h2 className="text-md mb-4 font-semibold dark:text-white">
-          {t("ollamaSettings.settings.ragSettings.label")}
+          {t("dialoqbaseSettings.settings.ragSettings.label")}
         </h2>
         <Form
           onFinish={(data) => {
@@ -192,26 +193,36 @@ export const SettingsBody = () => {
           }}>
           <Form.Item
             name="defaultEM"
-            label={t("ollamaSettings.settings.ragSettings.model.label")}
-            help={t("ollamaSettings.settings.ragSettings.model.help")}
-            rules={[
+            label={t("dialoqbaseSettings.settings.ragSettings.model.label")}
+            rules={[  
               {
                 required: true,
-                message: t("ollamaSettings.settings.ragSettings.model.required")
+                message: t("dialoqbaseSettings.settings.ragSettings.model.required")
               }
             ]}>
             <Select
               size="large"
-              filterOption={(input, option) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-                option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
               showSearch
               placeholder="Select a model"
               style={{ width: "100%" }}
               className="mt-4"
-              options={data.models?.map((model) => ({
-                label: model.name,
+              filterOption={(input, option) =>
+                option.label.key
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
+              options={data?.models?.map((model) => ({
+                label: (
+                  <span
+                    key={model.name}
+                    className="flex flex-row gap-3 items-center">
+                    <ProviderIcons
+                      model={model.name}
+                      provider={model.provider}
+                    />
+                    {model.name}
+                  </span>
+                ),
                 value: model.model_id
               }))}
             />
@@ -219,37 +230,37 @@ export const SettingsBody = () => {
 
           <Form.Item
             name="chunkSize"
-            label={t("ollamaSettings.settings.ragSettings.chunkSize.label")}
+            label={t("dialoqbaseSettings.settings.ragSettings.chunkSize.label")}
             rules={[
               {
                 required: true,
                 message: t(
-                  "ollamaSettings.settings.ragSettings.chunkSize.required"
+                  "dialoqbaseSettings.settings.ragSettings.chunkSize.required"
                 )
               }
             ]}>
             <InputNumber
               style={{ width: "100%" }}
               placeholder={t(
-                "ollamaSettings.settings.ragSettings.chunkSize.placeholder"
+                "dialoqbaseSettings.settings.ragSettings.chunkSize.placeholder"
               )}
             />
           </Form.Item>
           <Form.Item
             name="chunkOverlap"
-            label={t("ollamaSettings.settings.ragSettings.chunkOverlap.label")}
+            label={t("dialoqbaseSettings.settings.ragSettings.chunkOverlap.label")}
             rules={[
               {
                 required: true,
                 message: t(
-                  "ollamaSettings.settings.ragSettings.chunkOverlap.required"
+                  "dialoqbaseSettings.settings.ragSettings.chunkOverlap.required"
                 )
               }
             ]}>
             <InputNumber
               style={{ width: "100%" }}
               placeholder={t(
-                "ollamaSettings.settings.ragSettings.chunkOverlap.placeholder"
+                "dialoqbaseSettings.settings.ragSettings.chunkOverlap.placeholder"
               )}
             />
           </Form.Item>

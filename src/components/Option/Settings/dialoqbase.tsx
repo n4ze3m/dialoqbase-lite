@@ -10,11 +10,12 @@ import {
 import { SettingPrompt } from "./prompt"
 import { useTranslation } from "react-i18next"
 import { getAllModels } from "@/db/model"
+import { ProviderIcons } from "@/components/Common/ProviderIcons"
 
 export const DialoqbaseSettings = () => {
   const { t } = useTranslation("settings")
 
-  const { data: ollamaInfo, status } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["fetchConfig"],
     queryFn: async () => {
       const [allModels, chunkOverlap, chunkSize, defaultEM] = await Promise.all(
@@ -66,14 +67,13 @@ export const DialoqbaseSettings = () => {
                 })
               }}
               initialValues={{
-                chunkSize: ollamaInfo?.chunkSize,
-                chunkOverlap: ollamaInfo?.chunkOverlap,
-                defaultEM: ollamaInfo?.defaultEM
+                chunkSize: data?.chunkSize,
+                chunkOverlap: data?.chunkOverlap,
+                defaultEM: data?.defaultEM
               }}>
               <Form.Item
                 name="defaultEM"
                 label={t("dialoqbaseSettings.settings.ragSettings.model.label")}
-                help={t("dialoqbaseSettings.settings.ragSettings.model.help")}
                 rules={[
                   {
                     required: true,
@@ -84,20 +84,29 @@ export const DialoqbaseSettings = () => {
                 ]}>
                 <Select
                   size="large"
-                  filterOption={(input, option) =>
-                    option!.label.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0 ||
-                    option!.value.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0
-                  }
-                  showSearch
                   placeholder={t(
                     "dialoqbaseSettings.settings.ragSettings.model.placeholder"
                   )}
                   style={{ width: "100%" }}
                   className="mt-4"
-                  options={ollamaInfo.models?.map((model) => ({
-                    label: model.name,
+                  filterOption={(input, option) =>
+                    option.label.key
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  showSearch
+                  options={data?.models?.map((model) => ({
+                    label: (
+                      <span
+                        key={model.name}
+                        className="flex flex-row gap-3 items-center">
+                        <ProviderIcons
+                          model={model.name}
+                          provider={model.provider}
+                        />
+                        {model.name}
+                      </span>
+                    ),
                     value: model.model_id
                   }))}
                 />

@@ -31,7 +31,7 @@ export const useMessage = () => {
     setEmbeddingController
   } = useDialoq()
   const { t } = useTranslation("option")
-  const [selectedModel, setSelectedModel] = useStorage("selectedModel")
+  const [selectedModel, setSelectedModel] = useStorage<{model_id: string, name: string}>("selectedModel")
 
   const {
     history,
@@ -269,7 +269,7 @@ export const useMessage = () => {
         historyId,
         setHistoryId,
         isRegenerate,
-        selectedModel: selectedModel,
+        selectedModel: selectedModel?.name,
         message,
         image,
         fullText,
@@ -285,7 +285,7 @@ export const useMessage = () => {
         history,
         historyId,
         image,
-        selectedModel,
+        selectedModel: selectedModel?.name,
         setHistory,
         setHistoryId,
         userMessage: message,
@@ -471,7 +471,7 @@ export const useMessage = () => {
         historyId,
         setHistoryId,
         isRegenerate,
-        selectedModel: selectedModel,
+        selectedModel: selectedModel?.name,
         message,
         image,
         fullText,
@@ -489,7 +489,7 @@ export const useMessage = () => {
         history,
         historyId,
         image,
-        selectedModel,
+        selectedModel: selectedModel?.name,
         setHistory,
         setHistoryId,
         userMessage: message,

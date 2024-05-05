@@ -108,13 +108,13 @@ export default function OptionLayout({
                   }}
                   size="large"
                   loading={isModelsLoading || isModelsFetching}
+                  placeholder={t("common:selectAModel")}
                   filterOption={(input, option) =>
                     option.label.key
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
                   showSearch
-                  placeholder={t("common:selectAModel")}
                   className="w-64 "
                   options={models?.map((model) => ({
                     label: (
