@@ -203,15 +203,11 @@ export const useMessage = () => {
           url: ""
         }
       })
+
       let humanMessage = new HumanMessage({
-        content: [
-          {
-            text: systemPrompt
-              .replace("{context}", context)
-              .replace("{question}", message),
-            type: "text"
-          }
-        ]
+        content: systemPrompt
+          .replace("{context}", context)
+          .replace("{question}", message)
       })
 
       const applicationChatHistory = generateHistory(history)
@@ -382,12 +378,7 @@ export const useMessage = () => {
       const prompt = await systemPromptForNonRag()
 
       let humanMessage = new HumanMessage({
-        content: [
-          {
-            text: message,
-            type: "text"
-          }
-        ]
+        content: message
       })
       if (image.length > 0) {
         humanMessage = new HumanMessage({
@@ -423,7 +414,7 @@ export const useMessage = () => {
           })
         )
       }
-
+      console.log([...applicationChatHistory, humanMessage])
       const chunks = await chatModel.stream(
         [...applicationChatHistory, humanMessage],
         {
