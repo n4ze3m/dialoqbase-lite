@@ -19,10 +19,10 @@ import { useMessage } from "~/hooks/useMessage"
 import { MoonIcon, SunIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { useI18n } from "@/hooks/useI18n"
+import { getAllModels } from "@/db/model"
 
 export const SettingsBody = () => {
   const { t } = useTranslation("settings")
-  const [ollamaURL, setOllamaURL] = React.useState<string>("")
   const [systemPrompt, setSystemPrompt] = React.useState<string>("")
   const [ragPrompt, setRagPrompt] = React.useState<string>("")
   const [ragQuestionPrompt, setRagQuestionPrompt] = React.useState<string>("")
@@ -38,31 +38,30 @@ export const SettingsBody = () => {
   const { data, status } = useQuery({
     queryKey: ["sidebarSettings"],
     queryFn: async () => {
-      // const [
-      //   ollamaURL,
-      //   systemPrompt,
-      //   ragPrompt,
-      //   allModels,
-      //   chunkOverlap,
-      //   chunkSize,
-      //   defaultEM
-      // ] = await Promise.all([
-      //   systemPromptForNonRag(),
-      //   promptForRag(),
-      //   defaultEmbeddingChunkOverlap(),
-      //   defaultEmbeddingChunkSize(),
-      //   defaultEmbeddingModelForRag()
-      // ])
+      const [
+        systemPrompt,
+        ragPrompt,
+        allModels,
+        chunkOverlap,
+        chunkSize,
+        defaultEM
+      ] = await Promise.all([
+        systemPromptForNonRag(),
+        promptForRag(),
+        getAllModels({ type: "embedding" }),
+        defaultEmbeddingChunkOverlap(),
+        defaultEmbeddingChunkSize(),
+        defaultEmbeddingModelForRag()
+      ])
 
       return {
-        url: "ollamaURL",
         normalSystemPrompt: systemPrompt,
-        ragSystemPrompt: "ragPrompt.ragPrompt",
-        ragQuestionPrompt:" ragPrompt.ragQuestionPrompt",
-        models: "allModels",
-        chunkOverlap: "",
-        chunkSize: "",
-        defaultEM : ""
+        ragSystemPrompt: ragPrompt.ragPrompt,
+        ragQuestionPrompt: ragPrompt.ragQuestionPrompt,
+        models: allModels,
+        chunkOverlap,
+        chunkSize,
+        defaultEM
       }
     }
   })
@@ -79,7 +78,6 @@ export const SettingsBody = () => {
 
   React.useEffect(() => {
     if (data) {
-      setOllamaURL(data.url)
       setSystemPrompt(data.normalSystemPrompt)
       setRagPrompt(data.ragSystemPrompt)
       setRagQuestionPrompt(data.ragQuestionPrompt)
@@ -174,8 +172,6 @@ export const SettingsBody = () => {
         )}
       </div>
 
-
-
       <div className="border border-gray-300 dark:border-gray-700 rounded p-4 bg-white dark:bg-[#171717]">
         <h2 className="text-md mb-4 font-semibold dark:text-white">
           {t("ollamaSettings.settings.ragSettings.label")}
@@ -188,6 +184,7 @@ export const SettingsBody = () => {
               overlap: data.chunkOverlap
             })
           }}
+          layout="vertical"
           initialValues={{
             chunkSize: data.chunkSize,
             chunkOverlap: data.chunkOverlap,
@@ -203,7 +200,7 @@ export const SettingsBody = () => {
                 message: t("ollamaSettings.settings.ragSettings.model.required")
               }
             ]}>
-            {/* <Select
+            <Select
               size="large"
               filterOption={(input, option) =>
                 option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
@@ -215,9 +212,9 @@ export const SettingsBody = () => {
               className="mt-4"
               options={data.models?.map((model) => ({
                 label: model.name,
-                value: model.model
+                value: model.model_id
               }))}
-            /> */}
+            />
           </Form.Item>
 
           <Form.Item

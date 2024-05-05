@@ -4,7 +4,11 @@ import React from "react"
 
 export const DialoqProvider = ({ children }: { children: React.ReactNode }) => {
   const [messages, setMessages] = React.useState<Message[]>([])
-  const [controller, setController] = React.useState<AbortController | null>(null)
+  const [controller, setController] = React.useState<AbortController | null>(
+    null
+  )
+  const [embeddingController, setEmbeddingController] =
+    React.useState<AbortController | null>(null)
 
   return (
     <DialoqContext.Provider
@@ -14,6 +18,9 @@ export const DialoqProvider = ({ children }: { children: React.ReactNode }) => {
 
         controller,
         setController,
+
+        embeddingController,
+        setEmbeddingController
       }}>
       {children}
     </DialoqContext.Provider>

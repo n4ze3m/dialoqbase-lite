@@ -1,6 +1,6 @@
-# Dialoq Lite
+# Dialoqbase Lite
 
-Dialoq Lite is a fork of [Page Assist](https://github.com/n4ze3m/page-assist.git) that provides a Sidebar and Web UI for Ollama. Since it's limited to Ollama, and has received more requests for support for other AI providers, I decided to create a new extension that is not limited to single AI provider.
+Dialoqbase Lite is a fork of [Page Assist](https://github.com/n4ze3m/page-assist.git) that provides a Sidebar and Web UI for Ollama. Since it's limited to Ollama, and has received more requests for support for other AI providers, I decided to create a new extension that is not limited to single AI provider.
 
 Checkout the Demo:
 

@@ -7,16 +7,20 @@ interface DialoqContext {
 
   controller: AbortController | null
   setController: Dispatch<SetStateAction<AbortController>>
+
+  embeddingController: AbortController | null
+  setEmbeddingController: Dispatch<SetStateAction<AbortController>>
 }
 
 export const DialoqContext = createContext<DialoqContext>({
   messages: [],
   setMessages: () => {},
 
-
   controller: null,
-  setController: () => {}
+  setController: () => {},
 
+  embeddingController: null,
+  setEmbeddingController: () => {}
 })
 
 export const useDialoq = () => {

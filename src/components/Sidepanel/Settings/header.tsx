@@ -11,8 +11,8 @@ export const SidepanelSettingsHeader = () => {
         <ChevronLeft className="h-5 w-5 text-gray-500 dark:text-gray-400" />
       </Link>
       <div className="focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-700 flex items-center dark:text-white">
-        <img className="h-6 w-auto" src={logoImage} alt={t("pageAssist")} />
-        <span className="ml-1 text-sm ">{t("pageAssist")}</span>
+        <img className="h-6 w-auto" src={logoImage} alt={t("productName")} />
+        <span className="ml-1 text-sm ">{t("productName")}</span>
       </div>
     </div>
   )

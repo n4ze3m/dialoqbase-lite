@@ -1,3 +1,5 @@
+import { ProviderIcons } from "@/components/Common/ProviderIcons"
+import { getAllModels } from "@/db/model"
 import { useQuery } from "@tanstack/react-query"
 import { Select } from "antd"
 import { RotateCcw } from "lucide-react"
@@ -6,32 +8,17 @@ import { useTranslation } from "react-i18next"
 import { useMessage } from "~/hooks/useMessage"
 
 export const EmptySidePanel = () => {
-  const [ollamaURL, setOllamaURL] = useState<string>("")
   const { t } = useTranslation(["playground", "common"])
-  const {
-    data: ollamaInfo,
-    status: ollamaStatus,
-    refetch,
-    isRefetching
-  } = useQuery({
-    queryKey: ["ollamaStatus"],
+  const { data, status, refetch, isRefetching } = useQuery({
+    queryKey: ["dialoqStatus"],
     queryFn: async () => {
-      const ollamaURL = ""
-      const models = []
+      const models = await getAllModels({ type: "chat" })
 
       return {
-        isOk: false,
-        models,
-        ollamaURL
+        models
       }
     }
   })
-
-  useEffect(() => {
-    if (ollamaInfo?.ollamaURL) {
-      setOllamaURL(ollamaInfo.ollamaURL)
-    }
-  }, [ollamaInfo])
 
   const { setSelectedModel, selectedModel, chatMode, setChatMode } =
     useMessage()
@@ -39,71 +26,46 @@ export const EmptySidePanel = () => {
   return (
     <div className="mx-auto sm:max-w-md px-4 mt-10">
       <div className="rounded-lg justify-center items-center flex flex-col border dark:border-gray-700 p-8 bg-white dark:bg-[#262626] shadow-sm">
-        {(ollamaStatus === "pending" || isRefetching) && (
+        {(status === "pending" || isRefetching) && (
           <div className="inline-flex items-center space-x-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
             <p className="dark:text-gray-400 text-gray-900">
-              {t("ollamaState.searching")}
+              {t("dialoqState.searching")}
             </p>
           </div>
         )}
-        {!isRefetching && ollamaStatus === "success" ? (
-          ollamaInfo.isOk ? (
-            <div className="inline-flex  items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <p className="dark:text-gray-400 text-gray-900">
-                {t("ollamaState.running")}
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col space-y-2 justify-center items-center">
-              <div className="inline-flex  space-x-2">
-                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                <p className="dark:text-gray-400 text-gray-900">
-                  {t("ollamaState.notRunning")}
-                </p>
-              </div>
-
-              <input
-                className="bg-gray-100 dark:bg-black dark:text-gray-100 rounded-md px-4 py-2 mt-2 w-full"
-                type="url"
-                value={ollamaURL}
-                onChange={(e) => setOllamaURL(e.target.value)}
-              />
-
-              <button
-                onClick={() => {
-                  refetch()
-                }}
-                className="inline-flex mt-4 items-center rounded-md border border-transparent bg-black px-2 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50 ">
-                <RotateCcw className="h-4 w-4 mr-3" />
-                {t("common:retry")}
-              </button>
-            </div>
-          )
-        ) : null}
-
-        {ollamaStatus === "success" && ollamaInfo.isOk && (
+        {status === "success" && (
           <div className="mt-4">
-            {/* <Select
+            <Select
+              value={selectedModel?.model_id}
               onChange={(e) => {
-                setSelectedModel(e)
+                const model = data?.models?.find(
+                  (model) => model.model_id === e
+                )
+                setSelectedModel(model!)
               }}
-              value={selectedModel}
               size="large"
               filterOption={(input, option) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0 ||
-                option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                option.label.key.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               showSearch
               placeholder={t("common:selectAModel")}
-              style={{ width: "100%" }}
-              className="mt-4"
-              options={ollamaInfo.models?.map((model) => ({
-                label: model.name,
-                value: model.model
+              className="w-64 "
+              options={data?.models?.map((model) => ({
+                label: (
+                  <span
+                    key={model.name}
+                    className="flex flex-row gap-3 items-center">
+                    <ProviderIcons
+                      model={model.name}
+                      provider={model.provider}
+                    />
+                    {model.name}
+                  </span>
+                ),
+                value: model.model_id
               }))}
-            /> */}
+            />
 
             <div className="mt-4">
               <div className="inline-flex items-center">

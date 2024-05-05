@@ -8,15 +8,23 @@ const DEFAULT_PAGE_SHARE_URL = "https://pageassist.xyz"
 const DEFAULT_RAG_QUESTION_PROMPT =
   "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.   Chat History: {chat_history} Follow Up Input: {question} Standalone question:"
 
-const DEFAUTL_RAG_SYSTEM_PROMPT = `You are a helpful AI assistant. Use the following pieces of context to answer the question at the end. If you don't know the answer, just say you don't know. DO NOT try to make up an answer. If the question is not related to the context, politely respond that you are tuned to only answer questions that are related to the context.  {context}  Question: {question} Helpful answer in markdown:`
+const DEFAUTL_RAG_SYSTEM_PROMPT = `You are a helpful AI assistant. Use the following pieces of context to answer the question at the end. If you don't know the answer, just say you don't know. DO NOT try to make up an answer. If the question is not related to the context, politely respond that you are tuned to only answer questions that are related to the context.  
 
+Context:
+
+{context}
+
+-------------------
+
+Question: {question} 
+
+Helpful answer:`
 
 const DEFAULT_WEBSEARCH_PROMP = `You are a helpful assistant that can answer any questions. You can use the following search results in case you want to answer questions about anything in real-time. The current date and time are {current_date_time}.  
 
 Search results: 
 
 {search_results}`
-
 
 export const askForModelSelectionEveryTime = async () => {
   const askForModelSelectionEveryTime = await storage.get(
@@ -142,7 +150,6 @@ export const saveForRag = async (
   await setDefaultEmbeddingChunkOverlap(overlap)
 }
 
-
 export const getWebSearchPrompt = async () => {
   const prompt = await storage.get("webSearchPrompt")
   if (!prompt || prompt.length === 0) {
@@ -158,16 +165,14 @@ export const setWebSearchPrompt = async (prompt: string) => {
 export const geWebSearchFollowUpPrompt = async () => {
   const prompt = await storage.get("webSearchFollowUpPrompt")
   if (!prompt || prompt.length === 0) {
-    return DEFAULT_RAG_QUESTION_PROMPT;
+    return DEFAULT_RAG_QUESTION_PROMPT
   }
   return prompt
 }
 
-
 export const setWebSearchFollowUpPrompt = async (prompt: string) => {
   await storage.set("webSearchFollowUpPrompt", prompt)
 }
-
 
 export const setWebPrompts = async (prompt: string, followUpPrompt: string) => {
   await setWebSearchPrompt(prompt)
@@ -182,9 +187,9 @@ export const getIsSimpleInternetSearch = async () => {
   return isSimpleInternetSearch === "true"
 }
 
-
-
-export const setIsSimpleInternetSearch = async (isSimpleInternetSearch: boolean) => {
+export const setIsSimpleInternetSearch = async (
+  isSimpleInternetSearch: boolean
+) => {
   await storage.set("isSimpleInternetSearch", isSimpleInternetSearch.toString())
 }
 
@@ -195,7 +200,6 @@ export const getPageShareUrl = async () => {
   }
   return pageShareUrl
 }
-
 
 export const setPageShareUrl = async (pageShareUrl: string) => {
   await storage.set("pageShareUrl", pageShareUrl)
