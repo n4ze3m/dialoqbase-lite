@@ -543,11 +543,14 @@ export const useMessage = () => {
   const stopStreamingRequest = () => {
     if (isEmbedding) {
       if (embeddingController) {
+        console.log("aborting embedding")
         embeddingController.abort()
         setEmbeddingController(null)
       }
     }
+    console.log("aborting chat", abortController)
     if (abortController) {
+      console.log("aborting chat")
       abortController.abort()
       setAbortController(null)
     }
