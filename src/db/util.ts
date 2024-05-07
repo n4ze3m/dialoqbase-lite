@@ -10,9 +10,7 @@ export const generateID = () => {
 
   
   export const getModelInfo = async (model_id: string) => {
-    console.log(model_id)
     const modeInfo = await getModelById(model_id)
-    console.log(modeInfo)
     const provider = await getProviderByKey(modeInfo.provider)  
     return {
       ...modeInfo,

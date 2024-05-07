@@ -20,8 +20,8 @@ export const openRouterModel = async ({
       baseURL: "https://openrouter.ai/api/v1",
       apiKey: apiKey,
       defaultHeaders: {
-        "HTTP-Referer": "https://dialoqlite.n4ze3m.com/",
-        "X-Title": "Dialoqlite"
+        "HTTP-Referer": "https://dialoqbase.n4ze3m.com/",
+        "X-Title": "Dialoqbase"
       }
     }
   })

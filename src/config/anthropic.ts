@@ -7,7 +7,8 @@ export const DEFAULT_ANTHROPIC_MODELS: ModelConfig[] = [
     fucntion_call: false,
     provider: "anthropic",
     vision: true,
-    type: "chat"
+    type: "chat",
+    context_size: 200_000
   },
   {
     model_id: "claude-3-sonnet-20240229-dialoq",
@@ -15,7 +16,8 @@ export const DEFAULT_ANTHROPIC_MODELS: ModelConfig[] = [
     fucntion_call: false,
     provider: "anthropic",
     vision: true,
-    type: "chat"
+    type: "chat",
+    context_size: 200_000
   },
   {
     model_id: "claude-3-haiku-20240307-dialoq",
@@ -23,6 +25,7 @@ export const DEFAULT_ANTHROPIC_MODELS: ModelConfig[] = [
     fucntion_call: false,
     provider: "anthropic",
     vision: true,
-    type: "chat"
+    type: "chat",
+    context_size: 200_000
   }
 ]

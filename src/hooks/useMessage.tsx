@@ -1,32 +1,44 @@
 import React from "react"
-import { cleanUrl } from "~/libs/clean-url"
-import {
-  defaultEmbeddingModelForRag,
-  getOllamaURL,
-  promptForRag,
-  systemPromptForNonRag
-} from "~/services/ollama"
-import { useStoreMessage, type Message } from "~/store"
+import { Message } from "@/types/message"
+import { useStoreMessage } from "~/store"
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
 import { getDataFromCurrentTab } from "~/libs/get-html"
-import { OllamaEmbeddings } from "@langchain/community/embeddings/ollama"
-import {
-  createChatWithWebsiteChain,
-  groupMessagesByConversation
-} from "~/chain/chat-with-website"
 import { MemoryVectorStore } from "langchain/vectorstores/memory"
 import { memoryEmbedding } from "@/utils/memory-embeddings"
-import { getModelById } from "@/db/model"
-import {  dialoqChatModel } from "@/libs/model"
-import { getModelInfo } from "@/db/util"
+import { ChatHistory } from "@/store/option"
+import { generateID, getModelInfo } from "@/db/util"
+import { saveMessageOnError, saveMessageOnSuccess } from "./chat-helper"
 import { notification } from "antd"
+import { useTranslation } from "react-i18next"
+import { useDialoq } from "@/context"
+import { formatDocs } from "@/chain/chat-with-x"
+import { useStorage } from "@plasmohq/storage/hook"
+import { dialoqChatModel } from "@/libs/model"
+import {
+  defaultEmbeddingModelForRag,
+  promptForRag,
+  systemPromptForNonRag
+} from "@/services/dialoqbase"
+import { dialoqEmbeddingModel } from "@/libs/embedding-model"
 
 export const useMessage = () => {
   const {
-    history,
+    controller: abortController,
+    setController: setAbortController,
     messages,
-    setHistory,
     setMessages,
+    embeddingController,
+    setEmbeddingController
+  } = useDialoq()
+  const { t } = useTranslation("option")
+  const [selectedModel, setSelectedModel] = useStorage<{
+    model_id: string
+    name: string
+  }>("selectedModel")
+
+  const {
+    history,
+    setHistory,
     setStreaming,
     streaming,
     setIsFirstMessage,
@@ -36,8 +48,6 @@ export const useMessage = () => {
     setIsLoading,
     isProcessing,
     setIsProcessing,
-    selectedModel,
-    setSelectedModel,
     chatMode,
     setChatMode,
     setIsEmbedding,
@@ -47,8 +57,6 @@ export const useMessage = () => {
     currentURL,
     setCurrentURL
   } = useStoreMessage()
-
-  const abortControllerRef = React.useRef<AbortController | null>(null)
 
   const [keepTrackOfEmbedding, setKeepTrackOfEmbedding] = React.useState<{
     [key: string]: MemoryVectorStore
@@ -65,156 +73,17 @@ export const useMessage = () => {
     setStreaming(false)
   }
 
-  const chatWithWebsiteMode = async (message: string) => {
-    try {
-      let isAlreadyExistEmbedding: MemoryVectorStore
-      let embedURL: string, embedHTML: string, embedType: string
-      let embedPDF: { content: string; page: number }[] = []
-
-      if (messages.length === 0) {
-        const { content: html, url, type, pdf } = await getDataFromCurrentTab()
-        embedHTML = html
-        embedURL = url
-        embedType = type
-        embedPDF = pdf
-        setCurrentURL(url)
-        isAlreadyExistEmbedding = keepTrackOfEmbedding[currentURL]
-      } else {
-        isAlreadyExistEmbedding = keepTrackOfEmbedding[currentURL]
-        embedURL = currentURL
-      }
-      let newMessage: Message[] = [
-        ...messages,
-        {
-          isBot: false,
-          name: "You",
-          message,
-          sources: []
-        },
-        {
-          isBot: true,
-          name: selectedModel,
-          message: "▋",
-          sources: []
-        }
-      ]
-
-      const appendingIndex = newMessage.length - 1
-      setMessages(newMessage)
-      const ollamaUrl = await getOllamaURL()
-      const embeddingModle = await defaultEmbeddingModelForRag()
-
-      const ollamaEmbedding = new OllamaEmbeddings({
-        model: embeddingModle || selectedModel,
-        baseUrl: cleanUrl(ollamaUrl)
-      })
-
-      const modelInfo = await getModelInfo(selectedModel)
-
-      const chatModel = await dialoqChatModel({
-        config: {
-          apiKey: modelInfo.model_provider.apiKey,
-          baseUrl: modelInfo.model_provider.baseUrl,
-          headers: modelInfo.model_provider.headers
-        },
-        modelName: selectedModel,
-        provider: modelInfo.model_provider.key as any
-      })
-
-      let vectorstore: MemoryVectorStore
-
-      if (isAlreadyExistEmbedding) {
-        vectorstore = isAlreadyExistEmbedding
-      } else {
-        vectorstore = await memoryEmbedding({
-          html: embedHTML,
-          keepTrackOfEmbedding: keepTrackOfEmbedding,
-          ollamaEmbedding: ollamaEmbedding,
-          pdf: embedPDF,
-          setIsEmbedding: setIsEmbedding,
-          setKeepTrackOfEmbedding: setKeepTrackOfEmbedding,
-          type: embedType,
-          url: embedURL
-        })
-      }
-
-      const { ragPrompt: systemPrompt, ragQuestionPrompt: questionPrompt } =
-        await promptForRag()
-
-      const sanitizedQuestion = message.trim().replaceAll("\n", " ")
-
-      const chain = createChatWithWebsiteChain({
-        llm: chatModel,
-        question_llm: chatModel,
-        question_template: questionPrompt,
-        response_template: systemPrompt,
-        retriever: vectorstore.asRetriever()
-      })
-
-      const chunks = await chain.stream({
-        question: sanitizedQuestion,
-        chat_history: groupMessagesByConversation(history)
-      })
-      let count = 0
-      for await (const chunk of chunks) {
-        if (count === 0) {
-          setIsProcessing(true)
-          newMessage[appendingIndex].message = chunk + "▋"
-          setMessages(newMessage)
-        } else {
-          newMessage[appendingIndex].message =
-            newMessage[appendingIndex].message.slice(0, -1) + chunk + "▋"
-          setMessages(newMessage)
-        }
-
-        count++
-      }
-
-      newMessage[appendingIndex].message = newMessage[
-        appendingIndex
-      ].message.slice(0, -1)
-
-      setHistory([
-        ...history,
-        {
-          role: "user",
-          content: message
-        },
-        {
-          role: "assistant",
-          content: newMessage[appendingIndex].message
-        }
-      ])
-
-      setIsProcessing(false)
-    } catch (e) {
-      setIsProcessing(false)
-      setStreaming(false)
-
-      setMessages([
-        ...messages,
-        {
-          isBot: true,
-          name: selectedModel,
-          message: `Error in chat with website mode. Check out the following logs:
-          
-~~~
-${e?.message}
- ~~~
-        `,
-          sources: []
-        }
-      ])
-    }
-  }
-
-  const normalChatMode = async (message: string, image: string) => {
-   
-    abortControllerRef.current = new AbortController()
-
-   
-
-    const modelInfo = await getModelInfo(selectedModel)
+  const chatWithWebsiteMode = async (
+    message: string,
+    image: string,
+    isRegenerate: boolean,
+    messages: Message[],
+    history: ChatHistory,
+    signal: AbortSignal,
+    embeddingSignal: AbortSignal
+  ) => {
+    setStreaming(true)
+    const modelInfo = await getModelInfo(selectedModel.model_id)
 
     const chatModel = await dialoqChatModel({
       config: {
@@ -222,49 +91,297 @@ ${e?.message}
         baseUrl: modelInfo.model_provider.baseUrl,
         headers: modelInfo.model_provider.headers
       },
-      modelName: selectedModel,
+      modelName: selectedModel.model_id,
+      provider: modelInfo.model_provider.key as any
+    })
+    let newMessage: Message[] = []
+    let generateMessageId = generateID()
+
+    if (!isRegenerate) {
+      newMessage = [
+        ...messages,
+        {
+          isBot: false,
+          name: "You",
+          message,
+          sources: [],
+          images: []
+        },
+        {
+          isBot: true,
+          name: modelInfo?.name,
+          message: "▋",
+          sources: [],
+          id: generateMessageId
+        }
+      ]
+    } else {
+      newMessage = [
+        ...messages,
+        {
+          isBot: true,
+          name: modelInfo?.name,
+          message: "▋",
+          sources: [],
+          id: generateMessageId
+        }
+      ]
+    }
+    setMessages(newMessage)
+    let fullText = ""
+    let contentToSave = ""
+    let isAlreadyExistEmbedding: MemoryVectorStore
+    let embedURL: string, embedHTML: string, embedType: string
+    let embedPDF: { content: string; page: number }[] = []
+
+    if (messages.length === 0) {
+      const { content: html, url, type, pdf } = await getDataFromCurrentTab()
+      embedHTML = html
+      embedURL = url
+      embedType = type
+      embedPDF = pdf
+      setCurrentURL(url)
+      isAlreadyExistEmbedding = keepTrackOfEmbedding[currentURL]
+    } else {
+      isAlreadyExistEmbedding = keepTrackOfEmbedding[currentURL]
+      embedURL = currentURL
+    }
+
+    setMessages(newMessage)
+    const selectedEmbeddingModel = await defaultEmbeddingModelForRag()
+    const eModelInfo = await getModelInfo(selectedEmbeddingModel)
+    const embeddingModel = await dialoqEmbeddingModel({
+      config: {
+        apiKey: eModelInfo.model_provider.apiKey,
+        baseUrl: eModelInfo.model_provider.baseUrl,
+        headers: eModelInfo.model_provider.headers
+      },
+      modelName: selectedEmbeddingModel,
+      provider: eModelInfo.model_provider.key as any
+    })
+    let vectorstore: MemoryVectorStore
+
+    try {
+      if (isAlreadyExistEmbedding) {
+        vectorstore = isAlreadyExistEmbedding
+      } else {
+        vectorstore = await memoryEmbedding({
+          html: embedHTML,
+          keepTrackOfEmbedding: keepTrackOfEmbedding,
+          embeddingModel: embeddingModel,
+          pdf: embedPDF,
+          setIsEmbedding: setIsEmbedding,
+          setKeepTrackOfEmbedding: setKeepTrackOfEmbedding,
+          type: embedType,
+          url: embedURL
+        })
+      }
+      let query = message
+      const { ragPrompt: systemPrompt, ragQuestionPrompt: questionPrompt } =
+        await promptForRag()
+      if (newMessage.length > 2) {
+        const lastTenMessages = newMessage.slice(-10)
+        lastTenMessages.pop()
+        const chat_history = lastTenMessages
+          .map((message) => {
+            return `${message.isBot ? "Assistant: " : "Human: "}${message.message}`
+          })
+          .join("\n")
+        const promptForQuestion = questionPrompt
+          .replaceAll("{chat_history}", chat_history)
+          .replaceAll("{question}", message)
+
+        const response = await chatModel.invoke(promptForQuestion)
+        query = response.content.toString()
+      }
+
+      const docs = await vectorstore.similaritySearch(query, 4)
+      const context = formatDocs(docs)
+      const source = docs.map((doc) => {
+        return {
+          ...doc,
+          name: doc?.metadata?.source || "untitled",
+          type: doc?.metadata?.type || "unknown",
+          mode: "chat",
+          url: ""
+        }
+      })
+
+      let humanMessage = new HumanMessage({
+        content: systemPrompt
+          .replace("{context}", context)
+          .replace("{question}", message)
+      })
+
+      const applicationChatHistory = generateHistory(history)
+
+      const chunks = await chatModel.stream(
+        [...applicationChatHistory, humanMessage],
+        {
+          signal: signal
+        }
+      )
+      let count = 0
+      for await (const chunk of chunks) {
+        contentToSave += chunk.content
+        fullText += chunk.content
+        if (count === 0) {
+          setIsProcessing(true)
+        }
+        setMessages((prev) => {
+          return prev.map((message) => {
+            if (message.id === generateMessageId) {
+              return {
+                ...message,
+                message: fullText.slice(0, -1) + "▋"
+              }
+            }
+            return message
+          })
+        })
+        count++
+      }
+      // update the message with the full text
+      setMessages((prev) => {
+        return prev.map((message) => {
+          if (message.id === generateMessageId) {
+            return {
+              ...message,
+              message: fullText,
+              sources: source
+            }
+          }
+          return message
+        })
+      })
+
+      setHistory([
+        ...history,
+        {
+          role: "user",
+          content: message,
+          image
+        },
+        {
+          role: "assistant",
+          content: fullText
+        }
+      ])
+
+      await saveMessageOnSuccess({
+        historyId,
+        setHistoryId,
+        isRegenerate,
+        selectedModel: selectedModel?.name,
+        message,
+        image,
+        fullText,
+        source
+      })
+
+      setIsProcessing(false)
+      setStreaming(false)
+    } catch (e) {
+      const errorSave = await saveMessageOnError({
+        e,
+        botMessage: fullText,
+        history,
+        historyId,
+        image,
+        selectedModel: selectedModel?.name,
+        setHistory,
+        setHistoryId,
+        userMessage: message,
+        isRegenerating: isRegenerate
+      })
+
+      if (!errorSave) {
+        notification.error({
+          message: t("error"),
+          description: e?.message || t("somethingWentWrong")
+        })
+      }
+      setIsProcessing(false)
+      setStreaming(false)
+      setIsProcessing(false)
+      setStreaming(false)
+      setIsEmbedding(false)
+    } finally {
+      setAbortController(null)
+      setEmbeddingController(null)
+    }
+  }
+
+  const normalChatMode = async (
+    message: string,
+    image: string,
+    isRegenerate: boolean,
+    messages: Message[],
+    history: ChatHistory,
+    signal: AbortSignal
+  ) => {
+    setStreaming(true)
+    const modelInfo = await getModelInfo(selectedModel.model_id)
+    const chatModel = await dialoqChatModel({
+      config: {
+        apiKey: modelInfo.model_provider.apiKey,
+        baseUrl: modelInfo.model_provider.baseUrl,
+        headers: modelInfo.model_provider.headers
+      },
+      modelName: selectedModel.model_id,
       provider: modelInfo.model_provider.key as any
     })
 
     if (image.length > 0) {
-      if(modelInfo.provider === "google") {
+      if (modelInfo.provider === "google") {
         image = `data:image/png;base64,${image.split(",")[1]}`
       } else {
         image = `data:image/jpeg;base64,${image.split(",")[1]}`
       }
     }
-    let newMessage: Message[] = [
-      ...messages,
-      {
-        isBot: false,
-        name: "You",
-        message,
-        sources: [],
-        images: [image]
-      },
-      {
-        isBot: true,
-        name: selectedModel,
-        message: "▋",
-        sources: []
-      }
-    ]
 
-    const appendingIndex = newMessage.length - 1
+    let newMessage: Message[] = []
+
+    let generateMessageId = generateID()
+    if (!isRegenerate) {
+      newMessage = [
+        ...messages,
+        {
+          isBot: false,
+          name: "You",
+          message,
+          sources: [],
+          images: [image]
+        },
+        {
+          isBot: true,
+          name: modelInfo?.name,
+          message: "▋",
+          sources: [],
+          id: generateMessageId
+        }
+      ]
+    } else {
+      newMessage = [
+        ...messages,
+        {
+          isBot: true,
+          name: modelInfo?.name,
+          message: "▋",
+          sources: [],
+          id: generateMessageId
+        }
+      ]
+    }
     setMessages(newMessage)
+    let fullText = ""
+    let contentToSave = ""
 
     try {
       const prompt = await systemPromptForNonRag()
 
-      message = message.trim().replaceAll("\n", " ")
-
       let humanMessage = new HumanMessage({
-        content: [
-          {
-            text: message,
-            type: "text"
-          }
-        ]
+        content: message
       })
       if (image.length > 0) {
         humanMessage = new HumanMessage({
@@ -274,7 +391,12 @@ ${e?.message}
               type: "text"
             },
             {
-              image_url: image,
+              image_url:
+                modelInfo.provider !== "google"
+                  ? {
+                      url: image
+                    }
+                  : image,
               type: "image_url"
             }
           ]
@@ -295,33 +417,45 @@ ${e?.message}
           })
         )
       }
-
+      console.log([...applicationChatHistory, humanMessage])
       const chunks = await chatModel.stream(
         [...applicationChatHistory, humanMessage],
         {
-          signal: abortControllerRef.current.signal
+          signal: signal
         }
       )
       let count = 0
       for await (const chunk of chunks) {
+        contentToSave += chunk.content
+        fullText += chunk.content
         if (count === 0) {
           setIsProcessing(true)
-          newMessage[appendingIndex].message = chunk.content + "▋"
-          setMessages(newMessage)
-        } else {
-          newMessage[appendingIndex].message =
-            newMessage[appendingIndex].message.slice(0, -1) +
-            chunk.content +
-            "▋"
-          setMessages(newMessage)
         }
-
+        setMessages((prev) => {
+          return prev.map((message) => {
+            if (message.id === generateMessageId) {
+              return {
+                ...message,
+                message: fullText.slice(0, -1) + "▋"
+              }
+            }
+            return message
+          })
+        })
         count++
       }
 
-      newMessage[appendingIndex].message = newMessage[
-        appendingIndex
-      ].message.slice(0, -1)
+      setMessages((prev) => {
+        return prev.map((message) => {
+          if (message.id === generateMessageId) {
+            return {
+              ...message,
+              message: fullText.slice(0, -1)
+            }
+          }
+          return message
+        })
+      })
 
       setHistory([
         ...history,
@@ -332,28 +466,49 @@ ${e?.message}
         },
         {
           role: "assistant",
-          content: newMessage[appendingIndex].message
+          content: fullText
         }
       ])
 
-      setIsProcessing(false)
-    } catch (e) {
+      await saveMessageOnSuccess({
+        historyId,
+        setHistoryId,
+        isRegenerate,
+        selectedModel: selectedModel?.name,
+        message,
+        image,
+        fullText,
+        source: []
+      })
+
       setIsProcessing(false)
       setStreaming(false)
+      setIsProcessing(false)
+      setStreaming(false)
+    } catch (e) {
+      const errorSave = await saveMessageOnError({
+        e,
+        botMessage: fullText,
+        history,
+        historyId,
+        image,
+        selectedModel: selectedModel?.name,
+        setHistory,
+        setHistoryId,
+        userMessage: message,
+        isRegenerating: isRegenerate
+      })
 
-      setMessages([
-        ...messages,
-        {
-          isBot: true,
-          name: selectedModel,
-          message: `Something went wrong. Check out the following logs:
-        \`\`\`
-        ${e?.message}
-        \`\`\`
-        `,
-          sources: []
-        }
-      ])
+      if (!errorSave) {
+        notification.error({
+          message: t("error"),
+          description: e?.message || t("somethingWentWrong")
+        })
+      }
+      setIsProcessing(false)
+      setStreaming(false)
+    } finally {
+      setAbortController(null)
     }
   }
 
@@ -364,20 +519,39 @@ ${e?.message}
     message: string
     image: string
   }) => {
+    const newController = new AbortController()
+    let signal = newController.signal
+    setAbortController(newController)
+
     if (chatMode === "normal") {
-      await normalChatMode(message, image)
+      await normalChatMode(message, image, false, messages, history, signal)
     } else {
-      await chatWithWebsiteMode(message)
+      const newEmbeddingController = new AbortController()
+      let embeddingSignal = newEmbeddingController.signal
+      setEmbeddingController(newEmbeddingController)
+      await chatWithWebsiteMode(
+        message,
+        image,
+        false,
+        messages,
+        history,
+        signal,
+        embeddingSignal
+      )
     }
   }
-
   const stopStreamingRequest = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-      abortControllerRef.current = null
+    if (isEmbedding) {
+      if (embeddingController) {
+        embeddingController.abort()
+        setEmbeddingController(null)
+      }
+    }
+    if (abortController) {
+      abortController.abort()
+      setAbortController(null)
     }
   }
-
   return {
     messages,
     setMessages,

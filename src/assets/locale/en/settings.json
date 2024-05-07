@@ -2,6 +2,20 @@
     "generalSettings": {
         "title": "General Settings",
         "heading": "Web UI Settings",
+        "webSearch": {
+            "heading": "Manage Web Search",
+            "searchMode": {
+                "label": "Perform Simple Internet Search"
+            },
+            "provider": {
+                "label": "Search Engine",
+                "placeholder": "Select a search engine"
+            },
+            "totalSearchResults": {
+                "label": "Total Search Results",
+                "placeholder": "Enter Total Search Results"
+            }
+        },
         "settings": {
             "speechRecognitionLang": {
                 "label": "Speech Recognition Language",
@@ -25,6 +39,25 @@
                 "label": "Delete Chat History",
                 "button": "Delete",
                 "confirm": "Are you sure you want to delete your chat history? This action cannot be undone."
+            }
+        },
+        "system": {
+            "heading": "System Settings",
+            "deleteChatHistory": {
+                "label": "Delete Chat History",
+                "button": "Delete",
+                "confirm": "Are you sure you want to delete your chat history? This action cannot be undone."
+            },
+            "export": {
+                "label": "Export Chat History, Settings, and Prompts",
+                "button": "Export Data",
+                "success": "Export Success"
+            },
+            "import": {
+                "label": "Import Chat History, Settings, and Prompts",
+                "button": "Import Data",
+                "success": "Import Success",
+                "error": "Import Error"
             }
         }
     },
@@ -162,5 +195,59 @@
     "modelProvider": {
         "title": "Model Providers",
         "heading": "Manage Model Providers"
+    },
+    "dialoqbaseSettings": {
+        "title": "Dialoqbase Settings",
+        "heading": "Dialoqbase Settings",
+        "settings": {
+            "ollamaUrl": {
+                "label": "Ollama URL",
+                "placeholder": "Enter Ollama URL"
+            },
+            "ragSettings": {
+                "label": "RAG Settings",
+                "model": {
+                    "label": "Embedding Model",
+                    "required": "Please select a model",
+                    "placeholder": "Select a model"
+                },
+                "chunkSize": {
+                    "label": "Chunk Size",
+                    "placeholder": "Enter Chunk Size",
+                    "required": "Please enter a chunk size"
+                },
+                "chunkOverlap": {
+                    "label": "Chunk Overlap",
+                    "placeholder": "Enter Chunk Overlap",
+                    "required": "Please enter a chunk overlap"
+                }
+            },
+            "prompt": {
+                "label": "Configure RAG Prompt",
+                "option1": "Normal",
+                "option2": "Web",
+                "alert": "Configuring the system prompt here is deprecated. Please use the Manage Prompts section to add or edit prompts. This section will be removed in a future release",
+                "systemPrompt": "System Prompt",
+                "systemPromptPlaceholder": "Enter System Prompt",
+                "webSearchPrompt": "Web Search Prompt",
+                "webSearchPromptHelp": "Do not remove `{search_results}` from the prompt.",
+                "webSearchPromptError": "Please enter a web search prompt",
+                "webSearchPromptPlaceholder": "Enter Web Search Prompt",
+                "webSearchFollowUpPrompt": "Web Search Follow Up Prompt",
+                "webSearchFollowUpPromptHelp": "Do not remove `{chat_history}` and `{question}` from the prompt.",
+                "webSearchFollowUpPromptError": "Please input your Web Search Follow Up Prompt!",
+                "webSearchFollowUpPromptPlaceholder": "Your Web Search Follow Up Prompt"
+            }
+        }
+    },
+    "about": {
+        "title": "About",
+        "heading": "About",
+        "chromeVersion": "Dialoqbase Lite Version",
+        "intro": "Dialoqbase Lite is a fork of Page Assist. Dialoqbase Lite supports most third-party AI providers and models.",
+        "support": "You can support the Dialoqbase Lite & Page Assist project by donating or sponsoring through the following platforms:",
+        "koFi": "Support on Ko-fi",
+        "githubSponsor": "Sponsor on GitHub",
+        "githubRepo": "GitHub Repository"
     }
 }

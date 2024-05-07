@@ -1,11 +1,11 @@
 {
     "extName": {
-        "message": "Dialoqlite - A SidePanel & Web UI for AI Models"
+        "message": "Dialoqbase Lite - A SidePanel & Web UI for AI Models"
     },
     "extDescription": {
-        "message": "Easily interact with AI models in a SidePanel or Web UI. No coding required."
+        "message": "Dialoqbase Lite is a SidePanel & Web UI for AI Models. It allows you to interact with AI models in a conversational way."
     },
     "openSidePanelToChat": {
-        "message": "Open SidePanel to Chat"
+        "message": "Open Copilot to Chat"
     }
 }

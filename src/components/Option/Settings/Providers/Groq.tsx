@@ -1,19 +1,20 @@
 import { SaveButton } from "@/components/Common/SaveButton"
 import { DEFAULT_GROQ_MODELS } from "@/config/groq"
 import { upsertModels } from "@/db/model"
-import { upsertProvider } from "@/db/provider"
+import { AiProvider, upsertProvider } from "@/db/provider"
 import { isValidGroqApiKey } from "@/validate/groq"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
 import { useTranslation } from "react-i18next"
 
 type Props = {
-  apiKey: string
+  provider: AiProvider
 }
 
-export const ConifgGroq = ({ apiKey }: Props) => {
+export const ConifgGroq = ({ provider }: Props) => {
   const { t } = useTranslation("modelProvider")
   const { message } = App.useApp()
+  const queryClient = useQueryClient()
   const [form] = Form.useForm()
   const { mutate: validateApiKey, isPending } = useMutation({
     mutationFn: isValidGroqApiKey,
@@ -24,6 +25,9 @@ export const ConifgGroq = ({ apiKey }: Props) => {
         name: "Groq"
       })
       await upsertModels(DEFAULT_GROQ_MODELS)
+      queryClient.invalidateQueries({
+        queryKey: ["fetchModel"]
+      })
       message.success(t("groq.apiKey.valid"))
     },
     onError: () => {
@@ -39,7 +43,7 @@ export const ConifgGroq = ({ apiKey }: Props) => {
         validateApiKey(values)
       }}
       initialValues={{
-        apiKey
+        apiKey: provider?.apiKey
       }}>
       <Form.Item
         name="apiKey"

@@ -70,6 +70,12 @@ export class DialoqAiModel {
     models[index].hidden = !models[index].hidden
     return this.setModels(models)
   }
+
+  async deleteModelByProvider(provider: string): Promise<void> {
+    const models = await this.getModels()
+    const updatedModels = models.filter((m) => m.provider !== provider)
+    return this.setModels(updatedModels)
+  }
 }
 
 export const getAllModels = async ({
@@ -77,7 +83,7 @@ export const getAllModels = async ({
   type = "chat"
 }: {
   hidden?: boolean
-  type?: string
+  type?: "chat" | "embedding"
 }) => {
   const model = new DialoqAiModel()
   const models = await model.getModels()
@@ -103,4 +109,26 @@ export const upsertModels = async (models: ModelConfig[]) => {
       hidden: false
     }))
   )
+}
+
+export const saveModel = async (model: ModelConfig) => {
+  const modelDb = new DialoqAiModel()
+  return modelDb.addModel({
+    ...model,
+    createdAt: new Date().toISOString(),
+    hidden: false,
+    model_id: model.model_id.trim() + `_dialoqbase_${new Date().getTime()}`
+  })
+}
+
+export const deleteModel = async (model_id: string) => {
+  const model = new DialoqAiModel()
+  await model.deleteModel(model_id)
+  return model_id
+}
+
+export const deleteModelByProvider = async (provider: string) => {
+  const model = new DialoqAiModel()
+  await model.deleteModelByProvider(provider)
+  return provider
 }

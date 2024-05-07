@@ -12,7 +12,10 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "docs:dev": "vitepress dev adasdad",
+    "docs:build": "vitepress build adasdad",
+    "docs:preview": "vitepress preview adasdad"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.4",
@@ -32,6 +35,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "antd": "^5.13.3",
     "axios": "^1.6.7",
+    "cheerio": "^1.0.0-rc.12",
     "dayjs": "^1.11.10",
     "html-to-text": "^9.0.5",
     "i18next": "^23.10.1",
@@ -68,6 +72,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "5.3.3",
     "vite-plugin-top-level-await": "^1.4.1",
+    "vitepress": "^1.1.4",
     "wxt": "^0.17.7"
   },
   "resolutions": {

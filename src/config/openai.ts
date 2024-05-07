@@ -6,14 +6,16 @@ export const DEFAULT_OPENAI_MODELS: ModelConfig[] = [
     name: "GPT-3.5 Turbo",
     fucntion_call: true,
     provider: "openai",
-    type: "chat"
+    type: "chat",
+    context_size: 16_385
   },
   {
     model_id: "gpt-4-turbo-preview-dialoq",
     name: "GPT-4 Turbo Preview",
     fucntion_call: true,
     provider: "openai",
-    type: "chat"
+    type: "chat",
+    context_size: 128_000
   },
   {
     model_id: "gpt-4-vision-preview-dialoq",
@@ -21,7 +23,8 @@ export const DEFAULT_OPENAI_MODELS: ModelConfig[] = [
     fucntion_call: true,
     provider: "openai",
     vision: true,
-    type: "chat"
+    type: "chat",
+    context_size: 128_000
   },
   {
     model_id: "text-embedding-3-large-dialoq",

@@ -2,8 +2,10 @@ import {
   Book,
   BrainCircuit,
   CircuitBoardIcon,
+  InfoIcon,
   Orbit,
-  Share
+  Share,
+  ZapIcon
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
@@ -62,7 +64,13 @@ export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
                 current={location.pathname}
               />
               <LinkComponent
-                href="/settings/ollama"
+                href="/settings/dialoqbase"
+                name={t("dialoqbaseSettings.title")}
+                icon={ZapIcon}
+                current={location.pathname}
+              />
+              <LinkComponent
+                href="/settings/provider"
                 name={t("modelProvider.title")}
                 icon={CircuitBoardIcon}
                 current={location.pathname}
@@ -83,6 +91,12 @@ export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
                 href="/settings/share"
                 name={t("manageShare.title")}
                 icon={Share}
+                current={location.pathname}
+              />
+               <LinkComponent
+                href="/settings/about"
+                name={t("about.title")}
+                icon={InfoIcon}
                 current={location.pathname}
               />
             </ul>

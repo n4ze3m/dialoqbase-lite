@@ -1,20 +1,21 @@
 import { SaveButton } from "@/components/Common/SaveButton"
 import { DEFAULT_TOGETHER_MODELS } from "@/config/together"
 import { upsertModels } from "@/db/model"
-import { upsertProvider } from "@/db/provider"
+import { AiProvider, upsertProvider } from "@/db/provider"
 import { isValidTogetherApiKey } from "@/validate/together"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { App, Form, Input } from "antd"
 import { useTranslation } from "react-i18next"
 
 type Props = {
-  apiKey: string
+  provider: AiProvider
 }
 
-export const ConifgTogether = ({ apiKey }: Props) => {
+export const ConifgTogether = ({ provider }: Props) => {
   const { t } = useTranslation("modelProvider")
   const { message } = App.useApp()
   const [form] = Form.useForm()
+  const queryClient = useQueryClient()
   const { mutate: validateApiKey, isPending } = useMutation({
     mutationFn: isValidTogetherApiKey,
     onSuccess: async () => {
@@ -24,6 +25,9 @@ export const ConifgTogether = ({ apiKey }: Props) => {
         name: "together"
       })
       await upsertModels(DEFAULT_TOGETHER_MODELS)
+      queryClient.invalidateQueries({
+        queryKey: ["fetchModel"]
+      })
       message.success(t("together.apiKey.valid"))
     },
     onError: () => {
@@ -39,7 +43,7 @@ export const ConifgTogether = ({ apiKey }: Props) => {
         validateApiKey(values)
       }}
       initialValues={{
-        apiKey
+        apiKey: provider?.apiKey
       }}>
       <Form.Item
         name="apiKey"

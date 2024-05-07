@@ -1,6 +1,6 @@
-# Page Assist
+# Dialoqbase Lite
 
-Page Assist is an open-source Chrome Extension that provides a Sidebar and Web UI for your Local AI model. It allows you to interact with your model from any webpage.
+Dialoqbase Lite is a fork of [Page Assist](https://github.com/n4ze3m/page-assist.git) that provides a Sidebar and Web UI for Ollama. Since it's limited to Ollama, and has received more requests for support for other AI providers, I decided to create a new extension that is not limited to single AI provider.
 
 Checkout the Demo:
 

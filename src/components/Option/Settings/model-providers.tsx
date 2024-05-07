@@ -16,9 +16,14 @@ import { OpenRouterIcon } from "@/components/Icons/OpenRouter"
 import { ConifgOpenRouter } from "./Providers/OpenRouter"
 import { TogtherIcon } from "@/components/Icons/Togther"
 import { ConifgTogether } from "./Providers/Together"
+import { AddNewProvider } from "./Providers/AddProvider"
+import { useState } from "react"
+import { CpuIcon } from "lucide-react"
+import { ConfigCustomProvider } from "./Providers/Custom"
 
 export const SettingsModelProviders = () => {
-  const { t } = useTranslation("settings")
+  const [open, setOpen] = useState(false)
+  const { t } = useTranslation("modelProvider")
   const { data, status } = useQuery({
     queryKey: ["fetchProviders"],
     queryFn: getAllProviders
@@ -28,29 +33,28 @@ export const SettingsModelProviders = () => {
     <div className="flex flex-col space-y-3">
       <div className="flex flex-col space-y-6">
         <div>
-          <div>
+          <div className="flex flex-row justify-between items-center">
             <h2 className="text-base font-semibold leading-7 text-gray-900 dark:text-white">
-              {t("modelProvider.heading")}
+              {t("heading")}
             </h2>
-            <div className="border border-b border-gray-200 dark:border-gray-600 mt-3 mb-6"></div>
+            <button
+              onClick={() => setOpen(true)}
+              className={`inline-flex mt-4 items-center rounded-md border border-transparent bg-black px-2 py-2 text-sm font-medium leading-4 text-white shadow-sm dark:bg-white dark:text-gray-800 disabled:opacity-50 `}>
+              {t("customModelProvider")}
+            </button>
           </div>
+          <div className="border border-b border-gray-200 dark:border-gray-600 mt-3 mb-6"></div>
           {status === "pending" && <Skeleton paragraph={{ rows: 4 }} active />}
           {status === "success" && (
             <div className="flex flex-col space-y-6">
               <Collapse
                 size="large"
-                defaultActiveKey={["1"]}
                 items={[
                   {
                     key: "1",
                     label: <OpenAiIcon className="dark:text-white h-7" />,
                     children: (
-                      <ConfigOpenAI
-                        baseUrl={
-                          data?.openai?.baseUrl || "https://api.openai.com/v1"
-                        }
-                        apiKey={data?.openai?.apiKey || ""}
-                      />
+                      <ConfigOpenAI provider={data?.defaultProviders?.openai} />
                     )
                   }
                 ]}
@@ -62,7 +66,9 @@ export const SettingsModelProviders = () => {
                     key: "1",
                     label: <FireworksIcon className="dark:text-white! h-5" />,
                     children: (
-                      <ConifgFireworks apiKey={data?.fireworks?.apiKey || ""} />
+                      <ConifgFireworks
+                        provider={data?.defaultProviders?.fireworks}
+                      />
                     )
                   }
                 ]}
@@ -76,11 +82,7 @@ export const SettingsModelProviders = () => {
                     label: <AnthropicIcon className="dark:text-white h-4" />,
                     children: (
                       <ConfigAnthropic
-                        baseUrl={
-                          data?.anthropic?.baseUrl ||
-                          "https://api.anthropic.com"
-                        }
-                        apiKey={data?.anthropic?.apiKey || ""}
+                        provider={data?.defaultProviders?.anthropic}
                       />
                     )
                   }
@@ -94,7 +96,7 @@ export const SettingsModelProviders = () => {
                     key: "1",
                     label: <GeminiIcon className="dark:text-white h-7" />,
                     children: (
-                      <ConifgGemini apiKey={data?.google?.apiKey || ""} />
+                      <ConifgGemini provider={data?.defaultProviders?.google} />
                     )
                   }
                 ]}
@@ -113,7 +115,7 @@ export const SettingsModelProviders = () => {
                     ),
                     children: (
                       <ConifgOpenRouter
-                        apiKey={data?.openrouter?.apiKey || ""}
+                        provider={data?.defaultProviders?.openrouter}
                       />
                     )
                   }
@@ -127,7 +129,9 @@ export const SettingsModelProviders = () => {
                     key: "1",
                     label: <TogtherIcon className="dark:text-white h-7" />,
                     children: (
-                      <ConifgTogether apiKey={data?.together?.apiKey || ""} />
+                      <ConifgTogether
+                        provider={data?.defaultProviders?.together}
+                      />
                     )
                   }
                 ]}
@@ -139,14 +143,36 @@ export const SettingsModelProviders = () => {
                   {
                     key: "1",
                     label: <GroqIcon className="dark:text-white h-7" />,
-                    children: <ConifgGroq apiKey={data?.groq?.apiKey || ""} />
+                    children: (
+                      <ConifgGroq provider={data?.defaultProviders?.groq} />
+                    )
                   }
                 ]}
               />
+
+              {data?.thirdPartyProviders.map((provider, idx) => (
+                <Collapse
+                  key={idx}
+                  size="large"
+                  items={[
+                    {
+                      key: "1",
+                      label: (
+                        <div className="inline-flex gap-2 items-center">
+                          <CpuIcon className="dark:text-white h-7" />
+                          <span className="text-lg">{provider.name}</span>
+                        </div>
+                      ),
+                      children: <ConfigCustomProvider provider={provider} />
+                    }
+                  ]}
+                />
+              ))}
             </div>
           )}
         </div>
       </div>
+      <AddNewProvider open={open} setOpen={setOpen} />
     </div>
   )
 }

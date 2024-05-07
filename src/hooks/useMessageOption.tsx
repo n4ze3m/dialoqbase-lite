@@ -2,7 +2,7 @@ import React from "react"
 import {
   geWebSearchFollowUpPrompt,
   systemPromptForNonRagOption
-} from "~/services/ollama"
+} from "@/services/dialoqbase"
 import { type ChatHistory } from "~/store/option"
 import { Message } from "@/types/message"
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
@@ -22,6 +22,7 @@ import { generateID, getModelInfo } from "@/db/util"
 import { dialoqChatModel } from "@/libs/model"
 import { useDialoq } from "@/context"
 import { saveMessageOnError, saveMessageOnSuccess } from "./chat-helper"
+import { useStorage } from "@plasmohq/storage/hook"
 
 export const useMessageOption = () => {
   const {
@@ -30,6 +31,11 @@ export const useMessageOption = () => {
     controller: abortController,
     setController: setAbortController
   } = useDialoq()
+  const [selectedModel, setSelectedModel] = useStorage<{
+    model_id: string
+    name: string
+    provider: string
+  }>("selectedModel")
 
   const {
     history,
@@ -43,8 +49,6 @@ export const useMessageOption = () => {
     setIsLoading,
     isProcessing,
     setIsProcessing,
-    selectedModel,
-    setSelectedModel,
     chatMode,
     setChatMode,
     speechToTextLanguage,
@@ -210,7 +214,7 @@ export const useMessageOption = () => {
             if (message.id === generateMessageId) {
               return {
                 ...message,
-                message: fullText.slice(0, -1) + "▋"
+                message: fullText + " ▋"
               }
             }
             return message
@@ -277,6 +281,13 @@ export const useMessageOption = () => {
       })
 
       if (!errorSave) {
+        let newMessages = messages
+        if (newMessages.length > 0) {
+          if (newMessages[newMessages.length - 1].isBot) {
+            newMessages.pop()
+          }
+        }
+        setMessages(newMessages)
         notification.error({
           message: t("error"),
           description: e?.message || t("somethingWentWrong")
@@ -368,6 +379,7 @@ export const useMessageOption = () => {
       let humanMessage = new HumanMessage({
         content: message
       })
+
       if (image.length > 0) {
         humanMessage = new HumanMessage({
           content: [
@@ -425,7 +437,7 @@ export const useMessageOption = () => {
             if (message.id === generateMessageId) {
               return {
                 ...message,
-                message: fullText.slice(0, -1) + "▋"
+                message: fullText + " ▋"
               }
             }
             return message
@@ -439,7 +451,7 @@ export const useMessageOption = () => {
           if (message.id === generateMessageId) {
             return {
               ...message,
-              message: fullText.slice(0, -1)
+              message: fullText
             }
           }
           return message
@@ -491,6 +503,13 @@ export const useMessageOption = () => {
       })
 
       if (!errorSave) {
+        let newMessages = messages
+        if (newMessages.length > 0) {
+          if (newMessages[newMessages.length - 1].isBot) {
+            newMessages.pop()
+          }
+        }
+        setMessages(newMessages)
         notification.error({
           message: t("error"),
           description: e?.message || t("somethingWentWrong")
@@ -585,7 +604,7 @@ export const useMessageOption = () => {
   }
 
   const validateBeforeSubmit = () => {
-    if (!selectedModel || selectedModel?.name?.trim()?.length === 0) {
+    if (!selectedModel || selectedModel?.model_id?.trim()?.length === 0) {
       notification.error({
         message: t("error"),
         description: t("validationSelectModel")
@@ -595,7 +614,6 @@ export const useMessageOption = () => {
 
     return true
   }
-
   const editMessage = async (
     index: number,
     message: string,
@@ -612,10 +630,9 @@ export const useMessageOption = () => {
       }
 
       const currentHumanMessage = newMessages[index]
-
+      newMessages[index].message = message
       const previousMessages = newMessages.slice(0, index + 1)
       setMessages(previousMessages)
-      // previous history
       const previousHistory = newHistory.slice(0, index)
       setHistory(previousHistory)
       await updateMessageByIndex(historyId, index, message)

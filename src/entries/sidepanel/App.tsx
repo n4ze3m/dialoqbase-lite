@@ -9,6 +9,7 @@ import { StyleProvider } from "@ant-design/cssinjs"
 import { useDarkMode } from "~/hooks/useDarkmode"
 import "~/i18n"
 import { useTranslation } from "react-i18next"
+import { DialoqProvider } from "@/components/DialoqProvider"
 
 function IndexSidepanel() {
   const { mode } = useDarkMode()
@@ -28,15 +29,15 @@ function IndexSidepanel() {
             }}
             description={t("common:noData")}
           />
-        )}
-        >
-
+        )}>
         <StyleProvider hashPriority="high">
           <App>
-          <QueryClientProvider client={queryClient}>
-            <SidepanelRouting />
-            <ToastContainer />
-          </QueryClientProvider>
+            <QueryClientProvider client={queryClient}>
+              <DialoqProvider>
+                <SidepanelRouting />
+              </DialoqProvider>
+              <ToastContainer />
+            </QueryClientProvider>
           </App>
         </StyleProvider>
       </ConfigProvider>

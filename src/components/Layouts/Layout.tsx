@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   CogIcon,
   ComputerIcon,
+  GithubIcon,
   PanelLeftIcon,
   SquarePen,
   ZapIcon
@@ -56,7 +57,12 @@ export default function OptionLayout({
     return prompts?.find((prompt) => prompt.id === id)
   }
 
-  const handlePromptChange = (value: string) => {
+  const handlePromptChange = (value?: string) => {
+    if(!value)  {
+      setSelectedSystemPrompt(undefined)
+      setSelectedQuickPrompt(undefined)
+      return
+    }
     const prompt = getPromptInfoById(value)
     if (prompt?.is_system) {
       setSelectedSystemPrompt(prompt.id)
@@ -108,13 +114,13 @@ export default function OptionLayout({
                   }}
                   size="large"
                   loading={isModelsLoading || isModelsFetching}
+                  placeholder={t("common:selectAModel")}
                   filterOption={(input, option) =>
                     option.label.key
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
                   showSearch
-                  placeholder={t("common:selectAModel")}
                   className="w-64 "
                   options={models?.map((model) => ({
                     label: (
@@ -174,7 +180,14 @@ export default function OptionLayout({
                   {pathname === "/" && messages.length > 0 && !streaming && (
                     <ShareBtn messages={messages} />
                   )}
-
+                  <Tooltip title={t("githubRepository")}>
+                    <a
+                      href="https://github.com/n4ze3m/dialoqbase-lite"
+                      target="_blank"
+                      className="!text-gray-500 dark:text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                      <GithubIcon className="w-6 h-6" />
+                    </a>
+                  </Tooltip>
                   <Tooltip title={t("settings")}>
                     <NavLink
                       to="/settings"
