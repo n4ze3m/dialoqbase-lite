@@ -31,7 +31,11 @@ export const useMessageOption = () => {
     controller: abortController,
     setController: setAbortController
   } = useDialoq()
-  const [selectedModel, setSelectedModel] = useStorage("selectedModel")
+  const [selectedModel, setSelectedModel] = useStorage<{
+    model_id: string
+    name: string
+    provider: string
+  }>("selectedModel")
 
   const {
     history,
@@ -600,7 +604,7 @@ export const useMessageOption = () => {
   }
 
   const validateBeforeSubmit = () => {
-    if (!selectedModel || selectedModel?.trim()?.length === 0) {
+    if (!selectedModel || selectedModel?.model_id?.trim()?.length === 0) {
       notification.error({
         message: t("error"),
         description: t("validationSelectModel")
