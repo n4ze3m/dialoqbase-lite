@@ -2,6 +2,7 @@ import {
   Book,
   BrainCircuit,
   CircuitBoardIcon,
+  InfoIcon,
   Orbit,
   Share,
   ZapIcon
@@ -90,6 +91,12 @@ export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
                 href="/settings/share"
                 name={t("manageShare.title")}
                 icon={Share}
+                current={location.pathname}
+              />
+               <LinkComponent
+                href="/settings/about"
+                name={t("about.title")}
+                icon={InfoIcon}
                 current={location.pathname}
               />
             </ul>

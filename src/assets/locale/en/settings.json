@@ -239,5 +239,15 @@
                 "webSearchFollowUpPromptPlaceholder": "Your Web Search Follow Up Prompt"
             }
         }
+    },
+    "about": {
+        "title": "About",
+        "heading": "About",
+        "chromeVersion": "Dialoqbase Lite Version",
+        "intro": "Dialoqbase Lite is a fork of Page Assist. Dialoqbase Lite supports most third-party AI providers and models.",
+        "support": "You can support the Dialoqbase Lite & Page Assist project by donating or sponsoring through the following platforms:",
+        "koFi": "Support on Ko-fi",
+        "githubSponsor": "Sponsor on GitHub",
+        "githubRepo": "GitHub Repository"
     }
 }

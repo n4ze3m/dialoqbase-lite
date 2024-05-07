@@ -9,6 +9,7 @@ import { OptionsModelProvider } from "./options-model-provider"
 import { OptionSettings } from "./option-settings"
 import { OptionShare } from "./option-settings-share"
 import { OptionSettingDialoqbase } from "./option-model-dialoqbase"
+import { OptionAbout } from "./option-settings-about"
 
 export const OptionRouting = () => {
   const { mode } = useDarkMode()
@@ -26,6 +27,7 @@ export const OptionRouting = () => {
         <Route path="/settings/prompt" element={<OptionPrompt />} />
         <Route path="/settings/provider" element={<OptionsModelProvider />} />
         <Route path="/settings/share" element={<OptionShare />} />
+        <Route path="/settings/about" element={<OptionAbout />} />
       </Routes>
     </div>
   )
