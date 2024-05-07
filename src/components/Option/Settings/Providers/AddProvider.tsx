@@ -11,6 +11,7 @@ type Props = {
 export const AddNewProvider: React.FC<Props> = ({ open, setOpen }) => {
   const { t } = useTranslation("modelProvider")
   const client = useQueryClient()
+  const [form] = Form.useForm()
   const { mutate: saveProvider, isPending } = useMutation({
     mutationFn: async ({
       apiKey,
@@ -31,12 +32,16 @@ export const AddNewProvider: React.FC<Props> = ({ open, setOpen }) => {
         name,
         baseUrl
       })
+      await client.invalidateQueries({
+        queryKey: ["fetchProviders"]
+      })
       return key
     },
     onSuccess: async (key) => {
-      client.invalidateQueries({
+      await client.invalidateQueries({
         queryKey: ["fetchProviders"]
       })
+      form.resetFields()
       setOpen(false)
     },
     onError: () => {
@@ -55,6 +60,7 @@ export const AddNewProvider: React.FC<Props> = ({ open, setOpen }) => {
         onFinish={async (values) => {
           saveProvider(values)
         }}
+        form={form}
         layout="vertical">
         <Form.Item
           name="name"

@@ -2,6 +2,20 @@
     "generalSettings": {
         "title": "General Settings",
         "heading": "Web UI Settings",
+        "webSearch": {
+            "heading": "Manage Web Search",
+            "searchMode": {
+                "label": "Perform Simple Internet Search"
+            },
+            "provider": {
+                "label": "Search Engine",
+                "placeholder": "Select a search engine"
+            },
+            "totalSearchResults": {
+                "label": "Total Search Results",
+                "placeholder": "Enter Total Search Results"
+            }
+        },
         "settings": {
             "speechRecognitionLang": {
                 "label": "Speech Recognition Language",

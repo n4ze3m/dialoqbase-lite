@@ -47,7 +47,8 @@ export const dialoqEmbeddingModel = async ({
         modelName,
         openAIApiKey: config.apiKey,
         configuration: {
-          baseURL: config.baseUrl
+          baseURL: config.baseUrl,
+          apiKey: config.apiKey,
         }
       })
   }

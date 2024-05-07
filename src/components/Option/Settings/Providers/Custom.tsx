@@ -50,7 +50,7 @@ export const ConfigCustomProvider = ({ provider }: Props) => {
         client.invalidateQueries({
           queryKey: ["fetchProviders"]
         })
-        message.success(t("delete.success"))
+        message.success(t("deleteSuccess"))
       },
       onError: () => {
         message.error(t("delete.error"))
@@ -88,7 +88,7 @@ export const ConfigCustomProvider = ({ provider }: Props) => {
           type="button"
           disabled={isDeletePending}
           onClick={() => {
-            if (window.confirm(t("delete.confirm"))) {
+            if (window.confirm(t("deleteConfirm"))) {
               mutateDeleteProvider(provider.key)
             }
           }}

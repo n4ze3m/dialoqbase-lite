@@ -17,17 +17,21 @@ import { Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { deleteModel, getAllModels, saveModel } from "@/db/model"
 import { getConfiguredProviders } from "@/db/provider"
-import { isValidModel } from "@/validate/custom"
+import { isValidEmbeddingModel, isValidModel } from "@/validate/custom"
 import { useStorage } from "@plasmohq/storage/hook"
 
 export const ModelsBody = () => {
   const queryClient = useQueryClient()
   const [open, setOpen] = useState(false)
+  const [openEmbedding, setOpenEmbedding] = useState(false)
+
   const { t } = useTranslation(["manageModels", "common"])
   const [selectedModel, setSelectedModel] = useStorage("selectedModel")
   const [modelType, setModelType] = useState<"llm" | "embedding">("llm")
 
-  const [form] = Form.useForm()
+  const [chatForm] = Form.useForm()
+  const [embeddingForm] = Form.useForm()
+
   const { data, status } = useQuery({
     queryKey: ["fetchAllModels"],
     queryFn: async () => {
@@ -89,12 +93,38 @@ export const ModelsBody = () => {
       })
       message.success(t("notification.success"))
       setOpen(false)
-      form.resetFields()
+      chatForm.resetFields()
     },
     onError: (error) => {
       message.error(error?.message || t("notification.someError"))
     }
   })
+  const { mutate: saveNewEmbeddingModel, isPending: isSavingEmbedding } =
+    useMutation({
+      mutationFn: isValidEmbeddingModel,
+      onSuccess: async (data) => {
+        await saveModel({
+          fucntion_call: false,
+          model_id: data.model_id,
+          name: data.name,
+          provider: data.provider,
+          type: "embedding"
+        })
+        queryClient.invalidateQueries({
+          queryKey: ["fetchAllModels"]
+        })
+
+        queryClient.invalidateQueries({
+          queryKey: ["fetchModel"]
+        })
+        message.success(t("notification.success"))
+        setOpenEmbedding(false)
+        embeddingForm.resetFields()
+      },
+      onError: (error) => {
+        message.error(error?.message || t("notification.someError"))
+      }
+    })
 
   return (
     <div>
@@ -111,7 +141,7 @@ export const ModelsBody = () => {
                 </button>
               ) : (
                 <button
-                  onClick={() => setOpen(true)}
+                  onClick={() => setOpenEmbedding(true)}
                   className="inline-flex items-center rounded-md border border-transparent bg-black px-2 py-2 text-md font-medium leading-4 text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50">
                   {t("addEmbeddingModel")}
                 </button>
@@ -232,8 +262,8 @@ export const ModelsBody = () => {
         onCancel={() => setOpen(false)}>
         <Form
           layout="vertical"
+          form={chatForm}
           onFinish={async (values) => {
-            console.log(values)
             saveNewModel(values)
           }}>
           <Form.Item
@@ -245,8 +275,8 @@ export const ModelsBody = () => {
 
           <Form.Item
             name="model_id"
-            label={t("modal.form.model_id")}
-            rules={[{ required: true, message: t("modal.form.modelIdErr") }]}>
+            label={t("modal.form.modelId")}
+            rules={[{ required: true, message: t("modal.form.modelIdError") }]}>
             <Input
               placeholder={t("modal.form.modelIdPlaceholder")}
               size="large"
@@ -275,6 +305,66 @@ export const ModelsBody = () => {
             disabled={isSaving}
             className="inline-flex justify-center w-full text-center  items-center rounded-md border border-transparent bg-black px-2 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50 ">
             {!isSaving ? t("modal.submit") : t("modal.submitting")}
+          </button>
+        </Form>
+      </Modal>
+
+      <Modal
+        footer={null}
+        open={openEmbedding}
+        title={t("modal.titleEmbedding")}
+        onCancel={() => setOpenEmbedding(false)}>
+        <Form
+          layout="vertical"
+          form={embeddingForm}
+          onFinish={async (values) => {
+            saveNewEmbeddingModel(values)
+          }}>
+          <Form.Item
+            name="name"
+            label={t("modal.formEmbedding.name")}
+            rules={[
+              { required: true, message: t("modal.formEmbedding.nameError") }
+            ]}>
+            <Input
+              placeholder={t("modal.formEmbedding.namePlaceholder")}
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="model_id"
+            label={t("modal.formEmbedding.modelId")}
+            rules={[
+              { required: true, message: t("modal.formEmbedding.modelIdError") }
+            ]}>
+            <Input
+              placeholder={t("modal.formEmbedding.modelIdPlaceholder")}
+              size="large"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="provider"
+            label={t("modal.formEmbedding.provider")}
+            rules={[
+              {
+                required: true,
+                message: t("modal.formEmbedding.providerError")
+              }
+            ]}>
+            <Select
+              placeholder={t("modal.formEmbedding.providerPlaceholder")}
+              size="large"
+              options={data?.providers || []}
+            />
+          </Form.Item>
+
+          <button
+            type="submit"
+            disabled={isSavingEmbedding}
+            className="inline-flex justify-center w-full text-center  items-center rounded-md border border-transparent bg-black px-2 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-100 dark:focus:ring-gray-500 dark:focus:ring-offset-gray-100 disabled:opacity-50 ">
+            {!isSavingEmbedding ? t("modal.submit") : t("modal.submitting")}
           </button>
         </Form>
       </Modal>

@@ -210,7 +210,7 @@ export const useMessageOption = () => {
             if (message.id === generateMessageId) {
               return {
                 ...message,
-                message: fullText.slice(0, -1) + "▋"
+                message: fullText + " ▋"
               }
             }
             return message
@@ -433,7 +433,7 @@ export const useMessageOption = () => {
             if (message.id === generateMessageId) {
               return {
                 ...message,
-                message: fullText.slice(0, -1) + "▋"
+                message: fullText + " ▋"
               }
             }
             return message
@@ -447,7 +447,7 @@ export const useMessageOption = () => {
           if (message.id === generateMessageId) {
             return {
               ...message,
-              message: fullText.slice(0, -1)
+              message: fullText
             }
           }
           return message
@@ -600,7 +600,7 @@ export const useMessageOption = () => {
   }
 
   const validateBeforeSubmit = () => {
-    if (!selectedModel || selectedModel?.name?.trim()?.length === 0) {
+    if (!selectedModel || selectedModel?.trim()?.length === 0) {
       notification.error({
         message: t("error"),
         description: t("validationSelectModel")
@@ -610,7 +610,6 @@ export const useMessageOption = () => {
 
     return true
   }
-
   const editMessage = async (
     index: number,
     message: string,
@@ -627,10 +626,9 @@ export const useMessageOption = () => {
       }
 
       const currentHumanMessage = newMessages[index]
-
+      newMessages[index].message = message
       const previousMessages = newMessages.slice(0, index + 1)
       setMessages(previousMessages)
-      // previous history
       const previousHistory = newHistory.slice(0, index)
       setHistory(previousHistory)
       await updateMessageByIndex(historyId, index, message)

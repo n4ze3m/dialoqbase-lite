@@ -1,0 +1,118 @@
+{
+    "heading": "API Providers",
+    "customModelProvider": "Add Custom Model Provider",
+    "addProvider": "Add OpenAI-compatible API Provider",
+    "form": {
+        "name": {
+            "label": "Name",
+            "placeholder": "Enter the name of the provider",
+            "help": "The name of the provider",
+            "required": "Name is required"
+        },
+        "baseUrl": {
+            "label": "Base URL",
+            "placeholder": "Enter the base URL of the provider",
+            "help": "The base URL of the provider",
+            "required": "Base URL is required"
+        },
+        "apiKey": {
+            "label": "API Key",
+            "placeholder": "Enter the API key of the provider",
+            "help": "The API key of the provider"
+        },
+        "submit": "Add Provider",
+        "submitting": "Adding Provider..."
+    },
+    "openai": {
+        "baseUrl": {
+            "label": "OpenAI Base URL",
+            "help": "The base URL for the OpenAI API",
+            "placeholder": "https://api.openai.com/v1/"
+        },
+        "apiKey": {
+            "label": "OpenAI API Key",
+            "placeholder": "Enter your OpenAI API key here",
+            "help": "Goto https://platform.openai.com/account/api-keys to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added OpenAI as provider successfully"
+        }
+    },
+    "fireworks": {
+        "apiKey": {
+            "label": "Fireworks API Key",
+            "placeholder": "Enter your Fireworks API key here",
+            "help": "Goto https://fireworks.ai/api-keys to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added Fireworks as provider successfully"
+        }
+    },
+    "anthropic": {
+        "baseUrl": {
+            "label": "Anthropic Base URL",
+            "help": "The base URL for the Anthropic API",
+            "placeholder": "https://api.anthropic.com/v1/"
+        },
+        "apiKey": {
+            "label": "Anthropic API Key",
+            "placeholder": "Enter your Anthropic API key here",
+            "help": "Goto https://console.anthropic.com/settings/keys to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added Anthropic as provider successfully"
+        }
+    },
+    "google": {
+        "apiKey": {
+            "label": "Google API Key",
+            "placeholder": "Enter your Google API key here",
+            "help": "Goto https://aistudio.google.com/app/apikey to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added Google as provider successfully"
+        }
+    },
+    "openrouter": {
+        "apiKey": {
+            "label": "OpenRouter API Key",
+            "placeholder": "Enter your OpenRouter API key here",
+            "help": "Goto https://openrouter.ai/keys to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added OpenRouter as provider successfully"
+        }
+    },
+    "together": {
+        "apiKey": {
+            "label": "Together API Key",
+            "placeholder": "Enter your Together API key here",
+            "help": "Goto https://api.together.ai/settings/api-keys to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added Together as provider successfully"
+        }
+    },
+    "groq": {
+        "apiKey": {
+            "label": "Groq API Key",
+            "placeholder": "Enter your Groq API key here",
+            "help": "Goto https://console.groq.com/keys to get your API key",
+            "invalid": "Invalid API key",
+            "valid": "Added Groq as provider successfully"
+        }
+    },
+    "custom" :{
+        "apiKey": {
+            "label": "Custom API Key",
+            "placeholder": "Enter your Custom API key here",
+            "invalid": "Invalid API key",
+            "valid": "Updated Custom API key successfully",
+            "help": "API Key for the custom provider"
+        },
+        "baseUrl": {
+            "label": "Custom Base URL",
+            "placeholder": "Enter your Custom Base URL here",
+            "invalid": "Invalid Base URL",
+            "valid": "Updated Custom Base URL successfully"
+        }
+    },
+    "deleteConfirm": "Are you sure you want to delete the custom provider?",
+    "deleteSuccess": "Deleted custom provider successfully",
+    "deleteError": "Error deleting custom provider",
+    "delete": "Delete"
+}

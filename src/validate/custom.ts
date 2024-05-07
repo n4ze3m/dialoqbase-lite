@@ -1,4 +1,5 @@
 import { getProviderByKey } from "@/db/provider"
+import { dialoqEmbeddingModel } from "@/libs/embedding-model"
 import { dialoqChatModel } from "@/libs/model"
 
 export const isValidModel = async ({
@@ -33,5 +34,34 @@ export const isValidModel = async ({
     model_id,
     provider,
     vision
+  }
+}
+
+export const isValidEmbeddingModel = async ({
+  name,
+  model_id,
+  provider
+}: {
+  model_id: string
+  provider: string
+  name: string
+}) => {
+  const providerInfo = await getProviderByKey(provider)
+  const embed = await dialoqEmbeddingModel({
+    modelName: model_id?.trim(),
+    provider: provider,
+    config: providerInfo
+  })
+
+  const response = await embed.embedQuery("Hello, world!")
+
+  if (!response) {
+    throw new Error("Unable to validate model")
+  }
+
+  return {
+    name,
+    model_id,
+    provider
   }
 }

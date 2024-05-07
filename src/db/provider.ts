@@ -163,3 +163,8 @@ export const deleteProvider = async (key: string): Promise<void> => {
   await db.deleteProvider(key)
   await deleteModelByProvider(key)
 }
+
+export const getAll = async () => {
+  const db = new DialoqAiProviders()
+  return db.getProviders()
+}

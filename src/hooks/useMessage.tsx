@@ -31,7 +31,10 @@ export const useMessage = () => {
     setEmbeddingController
   } = useDialoq()
   const { t } = useTranslation("option")
-  const [selectedModel, setSelectedModel] = useStorage<{model_id: string, name: string}>("selectedModel")
+  const [selectedModel, setSelectedModel] = useStorage<{
+    model_id: string
+    name: string
+  }>("selectedModel")
 
   const {
     history,
@@ -519,9 +522,7 @@ export const useMessage = () => {
     const newController = new AbortController()
     let signal = newController.signal
     setAbortController(newController)
-    console.log("chatMode", chatMode)
-    console.log("isEmbedding", isEmbedding)
-    console.log("message", message)
+
     if (chatMode === "normal") {
       await normalChatMode(message, image, false, messages, history, signal)
     } else {
@@ -539,18 +540,14 @@ export const useMessage = () => {
       )
     }
   }
-
   const stopStreamingRequest = () => {
     if (isEmbedding) {
       if (embeddingController) {
-        console.log("aborting embedding")
         embeddingController.abort()
         setEmbeddingController(null)
       }
     }
-    console.log("aborting chat", abortController)
     if (abortController) {
-      console.log("aborting chat")
       abortController.abort()
       setAbortController(null)
     }
