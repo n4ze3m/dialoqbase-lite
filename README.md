@@ -6,7 +6,7 @@ Checkout the Demo:
 
 <div align="center">
 
-[![Page Assist Demo](https://img.youtube.com/vi/8VTjlLGXA4s/0.jpg)](https://www.youtube.com/watch?v=8VTjlLGXA4s)
+<!-- [![Page Assist Demo](https://img.youtube.com/vi/8VTjlLGXA4s/0.jpg)](https://www.youtube.com/watch?v=8VTjlLGXA4s) -->
 
 </div>
 
@@ -24,7 +24,7 @@ want more features? Create an issue and let me know.
 
 ### Chrome Web Store
 
-You can install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/page-assist-a-web-ui-for/jfgfiigpkhlkbnfnbobbkinehhfdhndo)
+You can install the extension from the [Chrome Web Store](#)
 
 Note: You can install the extension on any Chromium-based browser. It is not limited to Chrome.
 
@@ -33,8 +33,8 @@ Note: You can install the extension on any Chromium-based browser. It is not lim
 1. Clone the repository
 
 ```bash
-git clone https://github.com/n4ze3m/page-assist.git
-cd page-assist
+git clone https://github.com/n4ze3m/dialoqbase-lite.git
+cd dialoqbase-lite
 ```
 
 2. Install the dependencies
@@ -94,17 +94,6 @@ This will start a development server and watch for changes in the source files. 
 | Arc      | ❌      | ❌                | ✅     |
 | Firefox  | ❌      | ❌                | ❌     |
 
-## Local AI Provider
-
-- [Ollama](https://github.com/ollama/ollama) (Currently the only supported provider. More providers will be added in the future.)
-
-## Roadmap
-
-- [ ] Firefox Support
-- [ ] More Local AI Providers
-- [ ] More Features
-- [ ] More Customization Options
-- [ ] Better UI/UX
 
 ## Contributing
 
