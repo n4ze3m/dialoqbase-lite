@@ -12,7 +12,10 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "docs:dev": "vitepress dev adasdad",
+    "docs:build": "vitepress build adasdad",
+    "docs:preview": "vitepress preview adasdad"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.4",
@@ -69,6 +72,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "5.3.3",
     "vite-plugin-top-level-await": "^1.4.1",
+    "vitepress": "^1.1.4",
     "wxt": "^0.17.7"
   },
   "resolutions": {

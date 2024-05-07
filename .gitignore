@@ -41,3 +41,8 @@ keys.json
 # typescript
 .tsbuildinfo
 .wxt
+
+# docs
+
+docs/.vitepress/dist
+docs/.vitepress/cache   
