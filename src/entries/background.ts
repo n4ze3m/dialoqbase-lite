@@ -42,13 +42,13 @@ export default defineBackground({
     })
 
     chrome.contextMenus.create({
-      id: "open-side-panel-pa",
+      id: "open-side-panel-dialoq",
       title: browser.i18n.getMessage("openSidePanelToChat"),
       contexts: ["all"]
     })
 
     chrome.contextMenus.onClicked.addListener((info, tab) => {
-      if (info.menuItemId === "open-side-panel-pa") {
+      if (info.menuItemId === "open-side-panel-dialoq") {
         chrome.tabs.query(
           { active: true, currentWindow: true },
           async (tabs) => {
