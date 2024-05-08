@@ -37,7 +37,7 @@ export default defineConfig({
           default: "Ctrl+Shift+L"
         }
       },
-      execute_side_panel: {
+      execute_side_panel_dialoq: {
         description: "Open the side panel",
         suggested_key: {
           default: "Ctrl+Shift+P"

@@ -25,7 +25,7 @@ export default defineBackground({
 
     chrome.commands.onCommand.addListener((command) => {
       switch (command) {
-        case "execute_side_panel":
+        case "execute_side_panel_dialoq":
           chrome.tabs.query(
             { active: true, currentWindow: true },
             async (tabs) => {
