@@ -6,7 +6,7 @@ Checkout the Demo:
 
 <div align="center">
 
-<!-- [![Page Assist Demo](https://img.youtube.com/vi/8VTjlLGXA4s/0.jpg)](https://www.youtube.com/watch?v=8VTjlLGXA4s) -->
+[![Dialoqbase Lite Demo](https://img.youtube.com/vi/u9zUS3zIBvM/0.jpg)](https://www.youtube.com/watch?v=u9zUS3zIBvM)
 
 </div>
 
