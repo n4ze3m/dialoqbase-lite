@@ -89,7 +89,7 @@ This will start a development server and watch for changes in the source files. 
 | -------- | ------- | ----------------- | ------ |
 | Chrome   | ✅      | ✅                | ✅     |
 | Brave    | ✅      | ✅                | ✅     |
-| Edge     | ✅      | ❌                | ✅     |
+| Edge     | ✅      | ✅                | ✅     |
 | Opera GX | ❌      | ❌                | ✅     |
 | Arc      | ❌      | ❌                | ✅     |
 | Firefox  | ❌      | ❌                | ❌     |
