@@ -24,7 +24,7 @@ want more features? Create an issue and let me know.
 
 ### Chrome Web Store
 
-You can install the extension from the [Chrome Web Store](#)
+You can install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/dialoqbase-lite-a-sidepan/fhdonbcklgialicndhegpkkhhekafglb?hl=en)
 
 Note: You can install the extension on any Chromium-based browser. It is not limited to Chrome.
 
